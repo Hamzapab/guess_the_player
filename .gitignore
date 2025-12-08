@@ -1,0 +1,23 @@
+# Main project files
+CHECKLIST.md
+
+# Environment files
+.env
+client/.env
+server/.env
+
+# Node modules (usually client/server ignore internally, but it's fine)
+client/node_modules
+server/node_modules
+
+# Build
+dist/
+build/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
