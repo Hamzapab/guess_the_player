@@ -3,10 +3,16 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
+
+interface AuthRequest extends Request {
+  user?: {
+    userId: string;
+  };
+}
+
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { username, email, password } = req.body;
-
+      const { username, email, password } = req.body;
     // Check if user exists
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
@@ -83,13 +89,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const getMe = async (req: Request, res: Response): Promise<void> => {
+export const getMe = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     // Cast req to any to access user added by middleware, or better yet import AuthRequest if possible.
     // Given existing imports, I'll use a type assertion for now or modify imports if I can see them.
     // The previous view showed imports: import { Request, Response } from 'express';
     // I'll cast req.user
-    const userId = (req as any).user?.userId;
+    const userId = req.user?.userId;
 
     if (!userId) {
       res.status(401).json({ message: 'User ID not found in token' });
