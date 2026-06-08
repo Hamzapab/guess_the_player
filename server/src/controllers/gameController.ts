@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { AuthRequest } from '../middleware/auth.js';
+import { AuthRequest } from '../middleware/authMwr.js';
 import Game from '../models/Game.js';
 
 // Helper to generate a random 6-character room ID
@@ -15,7 +15,7 @@ const generateRoomId = (): string => {
 export const createGame = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
-    const { language = 'en' } = req.body;
+    const language = req.body?.language ?? 'en';
 
     if (!userId) {
       res.status(401).json({ message: 'User not authenticated' });

@@ -14,6 +14,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
     },
   });
 
+  // Middlware to handle Auth
   io.use((socket: Socket, next) => {
     const token = socket.handshake.auth.token;
 

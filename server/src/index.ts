@@ -15,6 +15,7 @@ app.use(express.json());
 
 import authRoutes from './routes/auth.js';
 import gameRoutes from './routes/games.js';
+import playerRoutes from './routes/players.js';
 
 app.get('/', (req, res) => {
   res.send('API is running');
@@ -22,6 +23,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/games', gameRoutes);
+app.use('/api/players', playerRoutes);
 
 connectDB();
 

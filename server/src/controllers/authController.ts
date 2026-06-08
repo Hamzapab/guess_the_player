@@ -8,6 +8,7 @@ interface AuthRequest extends Request {
   user?: {
     userId: string;
   };
+  
 }
 
 export const register = async (req: Request, res: Response): Promise<void> => {
@@ -96,6 +97,7 @@ export const getMe = async (req: AuthRequest, res: Response): Promise<void> => {
     // The previous view showed imports: import { Request, Response } from 'express';
     // I'll cast req.user
     const userId = req.user?.userId;
+
 
     if (!userId) {
       res.status(401).json({ message: 'User ID not found in token' });

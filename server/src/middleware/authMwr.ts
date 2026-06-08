@@ -7,7 +7,7 @@ export interface AuthRequest extends Request {
   };
 }
 
-export const auth = (req: AuthRequest, res: Response, next: NextFunction): void => {
+export const authMwr = (req: AuthRequest, res: Response, next: NextFunction): void => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
 
   if (!token) {
