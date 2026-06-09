@@ -7,7 +7,7 @@ export const createGame = async (language: 'en' | 'fr' | 'ar') => {
     throw new Error('Not authenticated');
   }
 
-  const response = await fetch('/api/games/create', {
+  const response = await fetch('http://localhost:5000/api/games/create', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
