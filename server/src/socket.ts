@@ -171,6 +171,94 @@ export const initializeSocket = (httpServer: HttpServer) => {
       }
     });
 
+    // Game Loop Engine 
+
+    // Question
+    socket.on('submit_question', async ({ roomId, text }: { roomId: string, text: string }) => {
+      try {
+        const game = await Game.findOne({ roomId });
+        if (!game || game.status !== 'active') return;
+
+        const currentUserId = user?.userId;
+
+        // 1. Security Check: Is it actually this player's turn?
+        if (game.currentTurn.toString() !== currentUserId) {
+          socket.emit('error', { message: 'It is not your turn to ask a question!' });
+          return;
+        }
+
+        // 2. Add the question to the game history
+        const newHistoryItem = {
+          action: 'question',  
+          playerId: currentUserId, 
+          timestamp: new Date(),  
+          details: {  
+            text: text,
+            answer: 'pending'
+          }
+        };
+        
+        game.history.push(newHistoryItem);
+        await game.save();
+
+        // 3. Forward the question to the room so the opponent sees it
+        io.to(roomId).emit('question_received', {
+          question: newHistoryItem,
+          message: 'Opponent asked a question. Waiting for answer...'
+        });
+
+      } catch (error) {
+        console.error('Error submitting question:', error);
+        socket.emit('error', { message: 'Failed to submit question.' });
+      }
+    });
+
+    // Response
+
+    socket.on('submit_answer', async ({ roomId, answer }: { roomId: string, answer: 'yes' | 'no' }) => {
+      try {
+        const game = await Game.findOne({ roomId });
+        if (!game || game.status !== 'active') return;
+
+        const currentUserId = user?.userId;
+
+        // 1. Security Check: The person answering must NOT be the person whose turn it is
+        if (game.currentTurn.toString() === currentUserId) {
+          socket.emit('error', { message: 'You cannot answer your own question!' });
+          return;
+        }
+
+        // 2. Find the last pending question in the history
+        const lastHistoryIndex = game.history.length - 1;
+        if (lastHistoryIndex < 0 || game.history[lastHistoryIndex].details.answer !== 'pending') {
+          socket.emit('error', { message: 'There is no pending question to answer.' });
+          return;
+        }
+
+        // 3. Record the answer
+        game.history[lastHistoryIndex].details.answer = answer;
+        game.history[lastHistoryIndex].action = "answer";
+
+        // 4. Switch the turn! 
+        // If it was Player 1's turn, make it Player 2's turn, and vice versa.
+        const player1Id = game.players[0];
+        const player2Id = game.players[1];
+        game.currentTurn = (game.currentTurn.toString() === player1Id.toString()) ? player2Id : player1Id;
+
+        await game.save();
+
+        // 5. Broadcast the result and the new turn to both players
+        io.to(roomId).emit('turn_resolved', {
+          history: game.history,
+          newTurn: game.currentTurn
+        });
+
+      } catch (error) {
+        console.error('Error submitting answer:', error);
+        socket.emit('error', { message: 'Failed to submit answer.' });
+      }
+    });
+
     socket.on('disconnect', () => {
       console.log('User disconnected');
     });
