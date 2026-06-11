@@ -2,6 +2,7 @@ import { Server, Socket } from 'socket.io';
 import { Server as HttpServer } from 'http';
 import jwt from 'jsonwebtoken';
 import Game from './models/Game.js';
+import Player from './models/Player.js';
 
 interface AuthTokenPayload {
   userId: string;
@@ -57,6 +58,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
         // 3. If this is a NEW player trying to join
         if (!isAlreadyInRoom) {
+
           // Check if the room is already full
           if (game.players.length >= 2 || game.status === 'active') {
             socket.emit('error', { message: 'This game room is full.' });
@@ -65,12 +67,12 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
           // Add them to the database array
           game.players.push(currentUserId);
-          await game.save();
+
         }
 
         // 4. Join the Socket.io room (Safe for both new joins and page refreshes)
         socket.join(roomId);
-
+         
         // Send current players list to the client who just joined
         socket.emit('room_joined', {
           roomId,
@@ -83,12 +85,89 @@ export const initializeSocket = (httpServer: HttpServer) => {
           userId: currentUserId
         });
 
+         // Game Engine ###############
+          if (game.players.length === 2) {
+
+            // Change Game Status
+            game.status = "active"
+
+            // Fetch Players from DB. 
+
+            const randomPlayersCards = await Player.aggregate([
+              { $sample: { size: 10 } }
+            ]);
+
+            if (randomPlayersCards.length < 2) {
+              socket.emit('error', { message: 'Not enough player cards in database to start game.' });
+              return;
+            }
+
+
+
+            // Randomly assign target cards to each player
+            const shuffledCards = [...randomPlayersCards].sort(() => 0.5 - Math.random());
+            const player1Id = game.players[0].toString();
+            const player2Id = game.players[1].toString();
+
+            // Map the player's User ID to their secret assigned Footballer Card ID
+            game.targetPlayers = new Map([
+              [player1Id, shuffledCards[0]._id.toString()],
+              [player2Id, shuffledCards[1]._id.toString()]
+            ]);
+
+            // Decide who goes first (50/50 coin flip)
+            game.currentTurn = Math.random() < 0.5 ? game.players[0] : game.players[1];
+
+            await game.save();
+          } else {
+            await game.save();
+          }
+        
+        if (game.status === 'active') {
+            io.to(roomId).emit('game_start_signal', {
+              roomId,
+              currentTurn: game.currentTurn,
+              status: game.status
+            });
+        }
+
+      
         console.log(`User ${currentUserId} joined room: ${roomId}`);
         console.log(`Players in DB for room: ${game.players.length}`);
+
+
 
       } catch (error) {
         console.error('Error joining room:', error);
         socket.emit('error', { message: 'Failed to join room' });
+      }
+    });
+
+    // Event for a player to safely discover their own assigned card without exposure
+    socket.on('get_my_target_card', async ({ roomId }: { roomId: string }) => {
+      try {
+        const game = await Game.findOne({ roomId });
+        if (!game || !game.targetPlayers) {
+          socket.emit('error', { message: 'Game or target cards not found.' });
+          return;
+        }
+
+        const currentUserId = user?.userId;
+        // Look up what footballer ID belongs to this specific user
+        const myCardId = game.targetPlayers.get(currentUserId);
+
+        if (!myCardId) {
+          socket.emit('error', { message: 'You do not have a card assigned in this match.' });
+          return;
+        }
+
+        // Fetch the full footballer details from the database
+        const cardDetails = await Player.findById(myCardId);
+
+        socket.emit('your_target_card', { targetCard: cardDetails });
+      } catch (error) {
+        console.error('Error fetching target card:', error);
+        socket.emit('error', { message: 'Failed to retrieve your target card.' });
       }
     });
 
