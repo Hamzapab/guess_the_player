@@ -72,7 +72,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
         // 4. Join the Socket.io room (Safe for both new joins and page refreshes)
         socket.join(roomId);
-         
+
         // Send current players list to the client who just joined
         socket.emit('room_joined', {
           roomId,
@@ -85,53 +85,53 @@ export const initializeSocket = (httpServer: HttpServer) => {
           userId: currentUserId
         });
 
-         // Game Engine ###############
-          if (game.players.length === 2) {
+        // Game Engine ###############
+        if (game.players.length === 2) {
 
-            // Change Game Status
-            game.status = "active"
+          // Change Game Status
+          game.status = "active"
 
-            // Fetch Players from DB. 
+          // Fetch Players from DB. 
 
-            const randomPlayersCards = await Player.aggregate([
-              { $sample: { size: 10 } }
-            ]);
+          const randomPlayersCards = await Player.aggregate([
+            { $sample: { size: 10 } }
+          ]);
 
-            if (randomPlayersCards.length < 2) {
-              socket.emit('error', { message: 'Not enough player cards in database to start game.' });
-              return;
-            }
-
-
-
-            // Randomly assign target cards to each player
-            const shuffledCards = [...randomPlayersCards].sort(() => 0.5 - Math.random());
-            const player1Id = game.players[0].toString();
-            const player2Id = game.players[1].toString();
-
-            // Map the player's User ID to their secret assigned Footballer Card ID
-            game.targetPlayers = new Map([
-              [player1Id, shuffledCards[0]._id.toString()],
-              [player2Id, shuffledCards[1]._id.toString()]
-            ]);
-
-            // Decide who goes first (50/50 coin flip)
-            game.currentTurn = Math.random() < 0.5 ? game.players[0] : game.players[1];
-
-            await game.save();
-          } else {
-            await game.save();
+          if (randomPlayersCards.length < 2) {
+            socket.emit('error', { message: 'Not enough player cards in database to start game.' });
+            return;
           }
-        
-        if (game.status === 'active') {
-            io.to(roomId).emit('game_start_signal', {
-              roomId,
-              currentTurn: game.currentTurn,
-              status: game.status
-            });
+
+
+
+          // Randomly assign target cards to each player
+          const shuffledCards = [...randomPlayersCards].sort(() => 0.5 - Math.random());
+          const player1Id = game.players[0].toString();
+          const player2Id = game.players[1].toString();
+
+          // Map the player's User ID to their secret assigned Footballer Card ID
+          game.targetPlayers = new Map([
+            [player1Id, shuffledCards[0]._id.toString()],
+            [player2Id, shuffledCards[1]._id.toString()]
+          ]);
+
+          // Decide who goes first (50/50 coin flip)
+          game.currentTurn = Math.random() < 0.5 ? game.players[0] : game.players[1];
+
+          await game.save();
+        } else {
+          await game.save();
         }
 
-      
+        if (game.status === 'active') {
+          io.to(roomId).emit('game_start_signal', {
+            roomId,
+            currentTurn: game.currentTurn,
+            status: game.status
+          });
+        }
+
+
         console.log(`User ${currentUserId} joined room: ${roomId}`);
         console.log(`Players in DB for room: ${game.players.length}`);
 
@@ -189,15 +189,15 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
         // 2. Add the question to the game history
         const newHistoryItem = {
-          action: 'question',  
-          playerId: currentUserId, 
-          timestamp: new Date(),  
-          details: {  
+          action: 'question',
+          playerId: currentUserId,
+          timestamp: new Date(),
+          details: {
             text: text,
             answer: 'pending'
           }
         };
-        
+
         game.history.push(newHistoryItem);
         await game.save();
 
@@ -256,6 +256,106 @@ export const initializeSocket = (httpServer: HttpServer) => {
       } catch (error) {
         console.error('Error submitting answer:', error);
         socket.emit('error', { message: 'Failed to submit answer.' });
+      }
+    });
+
+    socket.on('submit_final_guess', async ({ roomId, guessedPlayerId }: { roomId: string, guessedPlayerId: string }) => {
+      try {
+        const game = await Game.findOne({ roomId });
+        if (!game || game.status !== 'active') return;
+
+        const currentUserId = user?.userId;
+
+        // Security Check: Is it their turn?
+        if (game.currentTurn.toString() !== currentUserId) {
+          socket.emit('error', { message: 'It is not your turn to guess!' });
+          return;
+        }
+
+        const player1Id = game.players[0];
+        const player2Id = game.players[1];
+        const opponentId = (currentUserId.toString() === player1Id.toString()) ? player2Id : player1Id;
+        const opponentTargetCardId = game.targetPlayers.get(opponentId.toString());
+
+        if (!opponentTargetCardId) return;
+
+        // --- THE 3 LIVES LOGIC ---
+
+        if (guessedPlayerId === opponentTargetCardId) {
+          //  CORRECT GUESS!.
+          game.status = 'finished';
+          game.winner = currentUserId;
+
+          game.history.push({
+            action: 'final_guess',
+            playerId: currentUserId,
+            timestamp: new Date(),
+            details: {
+              guessedPlayerId: guessedPlayerId,
+              answer: 'correct'
+            }
+          });
+
+          await game.save();
+
+          io.to(roomId).emit('game_over', {
+            winnerId: currentUserId,
+            isCorrectGuess: true,
+            guessedPlayerId: guessedPlayerId,
+            actualTargetId: opponentTargetCardId,
+            history: game.history
+          });
+
+        } else {
+          // WRONG GUESS! Lose a life.
+
+          // Get current lives (default to 3 if not set)
+          let currentLives = game.remainingGuesses.get(currentUserId) ?? 3;
+          currentLives -= 1;
+          game.remainingGuesses.set(currentUserId, currentLives);
+
+          game.history.push({
+            action: 'final_guess',
+            playerId: currentUserId,
+            timestamp: new Date(),
+            details: {
+              guessedPlayerId: guessedPlayerId,
+              answer: 'incorrect'
+            }
+          });
+
+          if (currentLives <= 0) {
+            // OUT OF LIVES! Game Over. Opponent wins.
+            game.status = 'finished';
+            game.winner = opponentId;
+            await game.save();
+
+            io.to(roomId).emit('game_over', {
+              winnerId: opponentId,
+              isCorrectGuess: false,
+              guessedPlayerId: guessedPlayerId,
+              actualTargetId: opponentTargetCardId,
+              reason: 'out_of_lives',
+              history: game.history
+            });
+
+          } else {
+            // STILL ALIVE! Switch turn and continue.
+            game.currentTurn = opponentId;
+            await game.save();
+
+            // We emit 'turn_resolved' just like a normal question so the UI updates
+            io.to(roomId).emit('turn_resolved', {
+              history: game.history,
+              newTurn: game.currentTurn,
+              systemMessage: `Wrong guess! The opponent has ${currentLives} guesses remaining.`
+            });
+          }
+        }
+
+      } catch (error) {
+        console.error('Error submitting final guess:', error);
+        socket.emit('error', { message: 'Failed to process final guess.' });
       }
     });
 

@@ -14,6 +14,7 @@ export interface IGame extends Document {
     timestamp: Date;
     details?: any;
   }>;
+  remainingGuesses: Map<string, number>;
   createdAt: Date;
 }
 
@@ -39,6 +40,11 @@ const GameSchema: Schema = new Schema({
     timestamp: { type: Date, default: Date.now },
     details: Schema.Types.Mixed
   }],
+  remainingGuesses: {
+    type: Map,
+    of: Number,
+    default: {}
+  },
   createdAt: { type: Date, default: Date.now }
 });
 
