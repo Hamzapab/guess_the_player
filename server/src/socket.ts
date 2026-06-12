@@ -236,8 +236,14 @@ export const initializeSocket = (httpServer: HttpServer) => {
         }
 
         // 3. Record the answer
-        game.history[lastHistoryIndex].details.answer = answer;
-        game.history[lastHistoryIndex].action = "answer";
+        game.history.push({
+          action: 'answer',
+          playerId: currentUserId,
+          timestamp: new Date(),
+          details: {
+            answer: answer
+          }
+        });
 
         // 4. Switch the turn! 
         // If it was Player 1's turn, make it Player 2's turn, and vice versa.
@@ -274,8 +280,9 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
         const player1Id = game.players[0];
         const player2Id = game.players[1];
-        const opponentId = (currentUserId.toString() === player1Id.toString()) ? player2Id : player1Id;
+        const opponentId = (currentUserId.toString() === player1Id.toString()) ? player1Id : player2Id;
         const opponentTargetCardId = game.targetPlayers.get(opponentId.toString());
+      
 
         if (!opponentTargetCardId) return;
 
