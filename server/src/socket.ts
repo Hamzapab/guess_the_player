@@ -3,6 +3,7 @@ import { Server as HttpServer } from 'http';
 import jwt from 'jsonwebtoken';
 import Game from './models/Game.js';
 import Player from './models/Player.js';
+import { is } from 'zod/locales';
 
 interface AuthTokenPayload {
   userId: string;
@@ -37,8 +38,15 @@ export const initializeSocket = (httpServer: HttpServer) => {
   io.on('connection', (socket: Socket) => {
     const user = (socket as any).user;
     console.log(`User connected: ${user?.userId || 'Unknown'}`);
+    console.log("Bla bla bla blas")
+
+     socket.onAny((eventName, ...args) => {
+    console.log(`[DEBUG] Event received: ${eventName}`, args);
+  });
 
     socket.on('join_room', async ({ roomId }: { roomId: string }) => {
+      console.log("Join event tirggered")
+      console.log("User :" + user?.userId)
       try {
         const game = await Game.findOne({ roomId });
 
@@ -55,6 +63,9 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
         const currentUserId = user?.userId;
         const isAlreadyInRoom = game.players.includes(currentUserId);
+        console.log("The checK")
+        console.log("User : " + currentUserId);
+        console.log(isAlreadyInRoom);
 
         // 3. If this is a NEW player trying to join
         if (!isAlreadyInRoom) {

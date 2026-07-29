@@ -6,8 +6,19 @@ import { useGameStore } from './useGameStore';
  */
 export const joinRoom = (roomId: string) => {
   const socket = useSocketStore.getState().socket;
-  if (!socket) return console.error('Socket not initialized');
   
+  if (!socket) {
+    console.error('Socket not initialized');
+    return;
+  }
+  
+  if (!socket.connected) {
+    console.error('Socket is not connected!');
+    socket.connect();
+    return;
+  }
+  
+  console.log('Emitting join_room with roomId:', roomId);
   socket.emit('join_room', { roomId });
 };
 

@@ -25,6 +25,7 @@ const Home = () => {
   };
 
   const handleJoinGame = () => {
+    // TO-DO : If Room code do not exisit in DB show error
     if (!roomCode.trim()) return;
     navigate(`/game/${roomCode.trim()}`);
   };

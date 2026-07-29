@@ -7,12 +7,12 @@ import { joinRoom } from '../store/gameActions';
 
 // TO DO : Implement these 
 import { TurnHeader } from '../components/TurnHeader';
-// import { TargetCard } from '../components/TargetCard';
+import { TargetCard } from '../components/TargetCard';
 import { InterrogationChat } from '../components/TurnHeader';
 import { SniperGuess } from '../components/SniperGuess';
 
 export const GameRoom: React.FC = () => {
-  const { roomIdParam } = useParams<{ roomIdParam: string }>();
+  const { roomId } = useParams<{ roomId: string }>();
   
   // 1. Initialize the centralized engine listeners
   useGameEngine();
@@ -22,6 +22,7 @@ export const GameRoom: React.FC = () => {
   const isConnected = useSocketStore((state) => state.isConnected);
   const status = useGameStore((state) => state.status);
 
+
   // 2. Lifecycle management: Connect on mount, disconnect on leave
   useEffect(() => {
     connect();
@@ -30,12 +31,14 @@ export const GameRoom: React.FC = () => {
     };
   }, [connect, disconnect]);
 
-  // 3. Once socket connects, automatically join the room room ID from the URL
+  // 3. Once socket connects, automatically join the room ID from the URL
   useEffect(() => {
-    if (isConnected && roomIdParam) {
-      joinRoom(roomIdParam);
+    console.log("CHeck ")
+    console.log(isConnected && roomId)
+    if (isConnected && roomId) {
+      joinRoom(roomId);
     }
-  }, [isConnected, roomIdParam]);
+  }, [isConnected, roomId]);
 
   if (!isConnected) {
     return <div className="loading-screen">Connecting to game server...</div>;
@@ -52,7 +55,7 @@ export const GameRoom: React.FC = () => {
 
       <div className="main-game-grid">
         {/* Left/Static Column: Your Secret Identity */}
-        {/* <TargetCard /> */}
+        <TargetCard />
 
         {/* Dynamic Action Center */}
         <div className="action-center">

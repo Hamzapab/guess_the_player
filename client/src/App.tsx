@@ -5,7 +5,8 @@ import { useSocketStore } from './store/socketStore';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Auth from './pages/Auth';
-import Game from './pages/Game';
+// import Game from './pages/Game';
+import { GameRoom } from './pages/GameRoom';
 import './App.css';
 
 function App() {
@@ -36,7 +37,7 @@ function App() {
         {/* Protected Section */}
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<Home />} />
-          <Route path="/game/:roomId" element={<Game />} />
+          <Route path="/game/:roomId" element={<GameRoom />} />
         </Route>
       </Routes>
 
