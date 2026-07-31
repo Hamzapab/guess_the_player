@@ -34,6 +34,25 @@ export const submitQuestion = (text: string) => {
   socket.emit('submit_question', { roomId, text });
 };
 
+// Get Target Card
+
+export const getMyCard = ( roomId : string) =>{
+   const socket = useSocketStore.getState().socket;
+  
+  if (!socket) {
+    console.error('Socket not initialized');
+    return;
+  }
+  
+  if (!socket.connected) {
+    console.error('Socket is not connected!');
+    socket.connect();
+    return;
+  }
+    console.log('Emitting get my card with roomId:', roomId);
+  socket.emit('get_my_target_card', { roomId });
+}
+
 /**
  * Send a YES or NO answer back to the opponent's pending question
  */

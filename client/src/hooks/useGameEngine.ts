@@ -24,10 +24,14 @@ export const useGameEngine = () => {
         status: data.status,
         currentTurn: data.currentTurn,
       });
+
+      // Ask the server for the secret card
+      socket.emit('get_my_target_card', { roomId: data.roomId });
     });
 
     // 3. The server hands target card
     socket.on('your_target_card', (data) => {
+      console.log("client recieve target card :" + data.targetCard)
       setRoomState({ myTargetCard: data.targetCard });
     });
 

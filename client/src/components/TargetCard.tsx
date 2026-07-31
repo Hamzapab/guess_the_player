@@ -3,6 +3,7 @@ import { useGameStore } from '../store/useGameStore';
 
 export const TargetCard: React.FC = () => {
   const myTargetCard = useGameStore((state) => state.myTargetCard);
+  console.log(myTargetCard)
 
   if (!myTargetCard) {
     return (

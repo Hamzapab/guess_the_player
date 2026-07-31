@@ -38,7 +38,6 @@ export const initializeSocket = (httpServer: HttpServer) => {
   io.on('connection', (socket: Socket) => {
     const user = (socket as any).user;
     console.log(`User connected: ${user?.userId || 'Unknown'}`);
-    console.log("Bla bla bla blas")
 
      socket.onAny((eventName, ...args) => {
     console.log(`[DEBUG] Event received: ${eventName}`, args);
@@ -156,6 +155,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
     // Event for a player to safely discover their own assigned card without exposure
     socket.on('get_my_target_card', async ({ roomId }: { roomId: string }) => {
+      console.log("Server emit target card" )
       try {
         const game = await Game.findOne({ roomId });
         if (!game || !game.targetPlayers) {
