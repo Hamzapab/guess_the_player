@@ -23,6 +23,7 @@ export const useGameEngine = () => {
       setRoomState({
         status: data.status,
         currentTurn: data.currentTurn,
+        isOpponentDisconnected: false,
       });
 
       // Ask the server for the secret card
@@ -59,14 +60,35 @@ export const useGameEngine = () => {
         status: 'finished',
         winnerId: data.winnerId,
         history: data.history,
+        isOpponentDisconnected: false,
       });
+
+      // Special alert for abandonment
+      if (data.reason === 'opponent_abandoned') {
+        // TODO : Replace alert with a Toast
+        alert("You won! Your opponent abandoned the match."); 
+      }
     });
 
     // 7. Security or Logic Errors
     socket.on('error', (data) => {
       console.error('Game Error:', data.message);
-      // Replace this alert with a proper UI toast notification library later!
+      //TO DO Replace this alert with a proper UI toast notification library later!
       alert(data.message); 
+    });
+
+    // 8. Opponent dropped connection
+    socket.on('opponent_disconnected', (data) => {
+      console.warn('Opponent disconnected:', data.message);
+      // Update state so the UI can show a warning overlay/banner
+      setRoomState({ isOpponentDisconnected: true });
+    });
+
+    // 9. Opponent made it back in time
+    socket.on('opponent_reconnected', (data) => {
+      console.info('Opponent reconnected:', data.message);
+      // Clear the warning from the UI
+      setRoomState({ isOpponentDisconnected: false });
     });
 
     // ---  THE CLEANUP ---
@@ -80,6 +102,8 @@ export const useGameEngine = () => {
       socket.off('turn_resolved');
       socket.off('game_over');
       socket.off('error');
+      socket.off('opponent_disconnected');
+      socket.off('opponent_reconnected');
     };
   }, [socket, setRoomState]); 
 };

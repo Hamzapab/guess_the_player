@@ -90,6 +90,9 @@ export const initializeSocket = (httpServer: HttpServer) => {
           message: `Successfully joined room ${roomId}`
         });
 
+        // Storing data with Socket.IO speacial object socket.data
+        socket.data.roomId = roomId;
+
         // Notify the other player in the room
         socket.to(roomId).emit('user_joined', {
           userId: currentUserId
@@ -377,8 +380,69 @@ export const initializeSocket = (httpServer: HttpServer) => {
       }
     });
 
-    socket.on('disconnect', () => {
-      console.log('User disconnected');
+    socket.on('disconnect', async () => {
+      console.log(`User ${user?.userId} disconnected`);
+      const roomId = socket.data.roomId;
+
+      if (!roomId) return; // User wasn't in a room
+
+      // Notify the other player that their opponent disconnected
+      socket.to(roomId).emit('opponent_disconnected', {
+        message: 'Opponent lost connection. Waiting 30 seconds for them to return...',
+      });
+
+      // Start a 30-second grace period
+      setTimeout(async () => {
+        try {
+          const game = await Game.findOne({ roomId });
+          
+          // If game doesn't exist or is already finished, do nothing
+          if (!game || game.status === 'finished') return;
+
+          // Check if the disconnected user is STILL missing from the Socket.io room
+          // io.in(roomId).fetchSockets() is a Socket.IO method that lets you get all the socket connections currently in a specific room
+          // Returns an array of socket objects
+          const connectedSockets = await io.in(roomId).fetchSockets();
+
+          const isUserBack = connectedSockets.some(s => (s as any).user?.userId === user?.userId);
+
+          if (!isUserBack) {
+            console.log(`User ${user?.userId} failed to reconnect. Forfeiting game.`);
+            
+            // Figure out who the winner is (the person who DIDN'T disconnect)
+            const disconnectedPlayerId = user?.userId;
+            const winnerId = game.players.find(id => id.toString() !== disconnectedPlayerId);
+
+            // End the game
+            game.status = 'finished';
+            game.winner = winnerId;
+            
+            game.history.push({
+              action: 'forfeit',
+              playerId: disconnectedPlayerId,
+              timestamp: new Date(),
+              details: { reason: 'abandonment' }
+            });
+
+            await game.save();
+
+            // Tell the player who stayed online that they won!
+            io.to(roomId).emit('game_over', {
+              winnerId: winnerId,
+              reason: 'opponent_abandoned',
+              history: game.history
+            });
+          } else {
+             // User reconnected in time! Tell the opponent.
+             io.to(roomId).emit('opponent_reconnected', {
+                message: 'Opponent has reconnected! The game continues.',
+             });
+          }
+
+        } catch (error) {
+          console.error('Error handling disconnect timeout:', error);
+        }
+      }, 30000); // 30 seconds
     });
   });
 
