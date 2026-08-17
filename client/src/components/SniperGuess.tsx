@@ -17,7 +17,10 @@ export const SniperGuess: React.FC = () => {
   const dropdownRef = useRef<HTMLFormElement | null>(null);
 
   const currentTurn = useGameStore((state) => state.currentTurn);
-  const localUserId = useAuthStore((state) => state.user?.userId);
+  const localUserId = useAuthStore((state) => state.user?._id);
+  console.log("#########################################")
+  console.log(localUserId)
+  console.log("#########################################")
   const isMyTurn = currentTurn === localUserId;
 
   // TODO: Replace with players from DB

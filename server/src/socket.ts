@@ -294,7 +294,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
         const player1Id = game.players[0];
         const player2Id = game.players[1];
-        const opponentId = (currentUserId.toString() === player1Id.toString()) ? player1Id : player2Id;
+        const opponentId = (currentUserId.toString() === player1Id.toString()) ? player2Id : player1Id;
         const opponentTargetCardId = game.targetPlayers.get(opponentId.toString());
       
 
