@@ -2,38 +2,53 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '../store/useGameStore';
 import { useAuthStore } from '../store/authStore';
 import { submitFinalGuess } from '../store/gameActions';
+import { fetchPlayers } from '../api/gameApi';
+import { data } from 'react-router-dom';
 
 
-interface Footballer {
+export interface Player {
   _id: string;
   name: string;
+  nationality: string;
   club: string;
+  league?: string;
+  position: 'Goalkeeper' | 'Defender' | 'Midfielder' | 'Forward';
+  height?: number;
+  age?: number;
+  imageUrl?: string;
+  isLegend: boolean;
+  createdAt: string; 
+  updatedAt: string;
 }
+
 
 export const SniperGuess: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedPlayer, setSelectedPlayer] = useState<Footballer | null>(null);
+  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const dropdownRef = useRef<HTMLFormElement | null>(null);
 
   const currentTurn = useGameStore((state) => state.currentTurn);
   const localUserId = useAuthStore((state) => state.user?._id);
-  console.log("#########################################")
-  console.log(localUserId)
-  console.log("#########################################")
+
   const isMyTurn = currentTurn === localUserId;
 
-  // TODO: Replace with players from DB
-  const mockAllPlayersList: Footballer[] = [
-    { _id: '1', name: 'Lionel Messi', club: 'Inter Miami' },
-    { _id: '2', name: 'Cristiano Ronaldo', club: 'Al Nassr' },
-    { _id: '3', name: 'Kylian Mbappé', club: 'Real Madrid' },
-    { _id: '4', name: 'Erling Haaland', club: 'Manchester City' },
-  ];
+  const [players, setPlayers] =  useState<Player[]>([]);
+
+  useEffect(() => {
+    fetchPlayers()
+      .then(data => {
+       setPlayers(data.data);
+    })
+      .catch(err => console.error(err));
+    console.log(data)
+  },[]);
+
+
 
   const filteredPlayers = searchTerm.trim() === ''
     ? []
-    : mockAllPlayersList.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    : players.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
   useEffect(() => {
     const clickOutside = (e: MouseEvent) => {
@@ -45,7 +60,7 @@ export const SniperGuess: React.FC = () => {
     return () => document.removeEventListener('mousedown', clickOutside);
   }, []);
 
-  const handleSelect = (player: Footballer) => {
+  const handleSelect = (player: Player) => {
     setSelectedPlayer(player);
     setSearchTerm(player.name);
     setIsOpen(false);
@@ -56,7 +71,7 @@ export const SniperGuess: React.FC = () => {
     if (!selectedPlayer) return;
 
     if (window.confirm(`Are you absolutely sure it's ${selectedPlayer.name}? Incorrect guess will cost 1 life!`)) {
-      submitFinalGuess(selectedPlayer._id);
+      submitFinalGuess(selectedPlayer._id,selectedPlayer.name);
       setSearchTerm('');
       setSelectedPlayer(null);
     }

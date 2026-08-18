@@ -84,7 +84,7 @@ export const InterrogationChat: React.FC = () => {
                 {/* Chat Bubble */}
                 <div className={`max-w-[80%] p-3 rounded-2xl ${isMe ? 'bg-blue-600 text-white rounded-br-sm' : 'bg-gray-700 text-gray-200 rounded-bl-sm'}`}>
                   {item.action === 'final_guess' && <span className="font-bold text-yellow-300 block text-xs uppercase mb-1">Final Guess Attempt</span>}
-                  {item.details.text}
+                  is he {item.details.guessedPlayer}
                 </div>
                 
                 {/* Answer Badge */}

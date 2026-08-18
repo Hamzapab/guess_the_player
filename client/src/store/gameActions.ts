@@ -68,11 +68,11 @@ export const submitAnswer = (answer: 'yes' | 'no') => {
 /**
  * Box 2: Use the Sniper Autocomplete to risk a final guess on a player ID
  */
-export const submitFinalGuess = (guessedPlayerId: string) => {
+export const submitFinalGuess = (guessedPlayerId: string, guessedPlayer: string) => {
   const socket = useSocketStore.getState().socket;
   const roomId = useGameStore.getState().roomId;
 
   if (!socket || !roomId) return console.error('Missing socket or roomId');
 
-  socket.emit('submit_final_guess', { roomId, guessedPlayerId });
+  socket.emit('submit_final_guess', { roomId, guessedPlayerId , guessedPlayer});
 };

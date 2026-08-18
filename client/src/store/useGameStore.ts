@@ -8,7 +8,8 @@ export interface HistoryItem {
   details: {
     text?: string;          
     answer?: 'pending' | 'yes' | 'no';
-    guessedPlayerId?: string;  
+    guessedPlayerId?: string; 
+    guessedPlayer: string; 
   };
 }
 

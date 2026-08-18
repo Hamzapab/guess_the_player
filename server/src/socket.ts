@@ -279,7 +279,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
       }
     });
 
-    socket.on('submit_final_guess', async ({ roomId, guessedPlayerId }: { roomId: string, guessedPlayerId: string }) => {
+    socket.on('submit_final_guess', async ({ roomId, guessedPlayerId , guessedPlayer }: { roomId: string, guessedPlayerId: string , guessedPlayer : string }) => {
       try {
         const game = await Game.findOne({ roomId });
         if (!game || game.status !== 'active') return;
@@ -313,6 +313,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
             timestamp: new Date(),
             details: {
               guessedPlayerId: guessedPlayerId,
+              guessedPlayer : guessedPlayer,
               answer: 'correct'
             }
           });
@@ -323,6 +324,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
             winnerId: currentUserId,
             isCorrectGuess: true,
             guessedPlayerId: guessedPlayerId,
+            guessedPlayer : guessedPlayer,
             actualTargetId: opponentTargetCardId,
             history: game.history
           });
@@ -341,6 +343,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
             timestamp: new Date(),
             details: {
               guessedPlayerId: guessedPlayerId,
+              guessedPlayer : guessedPlayer,
               answer: 'incorrect'
             }
           });
