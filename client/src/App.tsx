@@ -16,7 +16,7 @@ function App() {
  useEffect(() => {
     const setupSocket = async () => {
       if (isSignedIn) {
-        const token = await getToken({ template: "default" });
+        const token = await getToken();
         if (token) connect(token);
       } else {
         disconnect();

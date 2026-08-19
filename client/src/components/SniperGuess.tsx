@@ -38,7 +38,7 @@ export const SniperGuess: React.FC = () => {
   const [players, setPlayers] =  useState<Player[]>([]);
   
   useEffect(() => {
-    getToken({ template: "default" })
+    getToken()
     .then(token => fetchPlayers(token))
       .then(data => {
        setPlayers(data.data);

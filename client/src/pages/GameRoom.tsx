@@ -28,7 +28,7 @@ export const GameRoom: React.FC = () => {
   // 2. Lifecycle management: Connect on mount, disconnect on leave
   useEffect(() => {
      const setupSocket = async () => {
-        const token = await getToken({ template: "default" });
+        const token = await getToken();
         if (token) connect(token);
       };
     setupSocket();

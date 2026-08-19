@@ -1,12 +1,15 @@
 import { Server, Socket } from 'socket.io';
 import { Server as HttpServer } from 'http';
-import jwt from 'jsonwebtoken';
+import { verifyToken } from '@clerk/backend';
 import Game from './models/Game.js';
 import Player from './models/Player.js';
 
 
-interface AuthTokenPayload {
-  userId: string;
+declare module 'socket.io' {
+  interface SocketData {
+    user: { userId: string };
+    roomId?: string;
+  }
 }
 
 export const initializeSocket = (httpServer: HttpServer) => {
@@ -17,27 +20,33 @@ export const initializeSocket = (httpServer: HttpServer) => {
     },
   });
 
-  // Middlware to handle Auth
-  io.use((socket: Socket, next) => {
-    const token = socket.handshake.auth.token || socket.handshake.headers?.token;
+  // Middleware to handle Auth
+  io.use(async (socket: Socket, next) => {
+    const rawToken = socket.handshake.auth.token ?? socket.handshake.headers?.token;
+    const token = Array.isArray(rawToken) ? rawToken[0] : rawToken;
 
     if (!token) {
       return next(new Error('Authentication error'));
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as AuthTokenPayload;
-      // Attach user data to the socket object if needed, or just verify
-      (socket as any).user = decoded;
+      const payload = await verifyToken(token, {
+        secretKey: process.env.CLERK_SECRET_KEY,
+      });
+
+      // `sub` is the standard JWT subject claim — Clerk sets it to the user's ID
+      // on both default session tokens and custom JWT templates.
+      socket.data.user = { userId: payload.sub };
       next();
     } catch (err) {
+      console.error('Socket auth failed:', err);
       next(new Error('Authentication error'));
     }
   });
 
   io.on('connection', (socket: Socket) => {
-    const user = (socket as any).user;
-    console.log(`User connected: ${user?.userId || 'Unknown'}`);
+    const user = socket.data.user; 
+    console.log(`User connected: ${user.userId}`);
 
      socket.onAny((eventName, ...args) => {
     console.log(`[DEBUG] Event received: ${eventName}`, args);

@@ -20,7 +20,7 @@ const Home = () => {
     setIsCreating(true);
     setError('');
     try {
-      const token = await  getToken({ template: "default" });
+      const token = await  getToken();
       const { roomId } = await createGame(language, token);
       navigate(`/game/${roomId}`);
     } catch (err: any) {

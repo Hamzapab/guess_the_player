@@ -2,8 +2,8 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IGame extends Document {
   roomId: string;
-  players: mongoose.Types.ObjectId[];
-  targetPlayers: Map<string, string>; // UserID -> PlayerID (card held)
+  players: string[];
+  targetPlayers: Map<string, string>; // 
   currentTurn: mongoose.Types.ObjectId;
   status: 'waiting' | 'active' | 'finished';
   winner?: mongoose.Types.ObjectId;
@@ -20,7 +20,7 @@ export interface IGame extends Document {
 
 const GameSchema: Schema = new Schema({
   roomId: { type: String, required: true, unique: true },
-  players: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  players: [{ type: String }],
   targetPlayers: { type: Map, of: String },
   currentTurn: { type: Schema.Types.ObjectId, ref: 'User' },
   status: { 
