@@ -1,21 +1,27 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
+import { useUser, useAuth } from "@clerk/clerk-react";
 import { createGame } from '../api/gameApi';
 
 const Home = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuthStore();
+  
+  const { user } = useUser();       
+  const { signOut } = useAuth();    
+
   const [language, setLanguage] = useState<'en' | 'fr' | 'ar'>('en');
   const [roomCode, setRoomCode] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState('');
+   const { getToken } = useAuth();
 
   const handleCreateGame = async () => {
+    
     setIsCreating(true);
     setError('');
     try {
-      const { roomId } = await createGame(language);
+      const token = await  getToken({ template: "default" });
+      const { roomId } = await createGame(language, token);
       navigate(`/game/${roomId}`);
     } catch (err: any) {
       setError(err.message || 'Failed to create game');
@@ -38,10 +44,10 @@ const Home = () => {
       {/* Navbar / Top Actions */}
       <div className="absolute top-6 right-6">
          <button 
-          onClick={logout}
+          onClick={() => signOut()}
           className="text-red-400 hover:text-red-300 font-medium transition-colors text-sm"
         >
-          Logout
+          signOut
         </button>
       </div>
 

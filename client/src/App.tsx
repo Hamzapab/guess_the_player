@@ -1,33 +1,29 @@
 import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { useAuthStore } from './store/authStore';
+import { useAuth } from "@clerk/clerk-react";   
 import { useSocketStore } from './store/socketStore';
+
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Auth from './pages/Auth';
-// import Game from './pages/Game';
 import { GameRoom } from './pages/GameRoom';
 import './App.css';
 
 function App() {
-  const { checkAuth, isAuthenticated } = useAuthStore();
+  const { isSignedIn ,getToken} = useAuth();            
   const { connect, disconnect, isConnected } = useSocketStore();
 
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      connect();
-    } else {
-      disconnect();
-    }
-  }, [isAuthenticated, connect, disconnect]);
-
-  // Loading state is now handled within ProtectedRoute for protected paths,
-  // or we could keep a global loader here. 
-  // For the requested flow, ProtectedRoute handles the check for redirect.
+ useEffect(() => {
+    const setupSocket = async () => {
+      if (isSignedIn) {
+        const token = await getToken({ template: "default" });
+        if (token) connect(token);
+      } else {
+        disconnect();
+      }
+    };
+    setupSocket();
+  }, [isSignedIn, getToken, connect, disconnect]);
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 relative">
@@ -41,8 +37,8 @@ function App() {
         </Route>
       </Routes>
 
-      {/* Connection Indicator (only show if authenticated maybe? or always?) */}
-      {isAuthenticated && (
+      {/* Connection Indicator */}
+      {isSignedIn && (
         <div
           className={`fixed bottom-4 right-4 w-4 h-4 rounded-full ${
             isConnected ? 'bg-green-500' : 'bg-red-500'
@@ -55,4 +51,3 @@ function App() {
 }
 
 export default App;
-

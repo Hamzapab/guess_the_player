@@ -14,7 +14,7 @@ const generateRoomId = (): string => {
 
 export const createGame = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const userId = req.user?.userId;
+    const userId = req.user?.clerkId;
     const language = req.body?.language ?? 'en';
 
     if (!userId) {

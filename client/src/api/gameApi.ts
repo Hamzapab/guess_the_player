@@ -1,12 +1,7 @@
-import { useAuthStore } from '../store/authStore';
 
-export const createGame = async (language: 'en' | 'fr' | 'ar') => {
-  const token = useAuthStore.getState().token;
 
-  if (!token) {
-    throw new Error('Not authenticated');
-  }
 
+export const createGame = async (language: 'en' | 'fr' | 'ar', token: string | null) => {
   const response = await fetch('http://localhost:5000/api/games/create', {
     method: 'POST',
     headers: {
@@ -24,9 +19,9 @@ export const createGame = async (language: 'en' | 'fr' | 'ar') => {
   return response.json();
 };
 
-export const fetchPlayers = async () => {
 
-  const token = useAuthStore.getState().token;
+export const fetchPlayers = async (token: string | null) => {
+  
 
   if (!token) {
     throw new Error('Not authenticated');

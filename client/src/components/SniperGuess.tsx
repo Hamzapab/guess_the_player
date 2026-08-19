@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '../store/useGameStore';
-import { useAuthStore } from '../store/authStore';
+  import { useUser, useAuth } from "@clerk/clerk-react";
 import { submitFinalGuess } from '../store/gameActions';
 import { fetchPlayers } from '../api/gameApi';
-import { data } from 'react-router-dom';
 
 
 export interface Player {
@@ -27,21 +26,24 @@ export const SniperGuess: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const dropdownRef = useRef<HTMLFormElement | null>(null);
-
+  const { getToken } = useAuth();
+  
   const currentTurn = useGameStore((state) => state.currentTurn);
-  const localUserId = useAuthStore((state) => state.user?._id);
 
+  const { user } = useUser();
+  const localUserId = user?.id;
+  
   const isMyTurn = currentTurn === localUserId;
-
+  
   const [players, setPlayers] =  useState<Player[]>([]);
-
+  
   useEffect(() => {
-    fetchPlayers()
+    getToken({ template: "default" })
+    .then(token => fetchPlayers(token))
       .then(data => {
        setPlayers(data.data);
     })
-      .catch(err => console.error(err));
-    console.log(data)
+    .catch(err => console.error(err));
   },[]);
 
 

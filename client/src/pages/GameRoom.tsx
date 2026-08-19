@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom'; 
 import { useSocketStore } from '../store/socketStore';
+import { useAuth } from "@clerk/clerk-react"; 
 import { useGameStore } from '../store/useGameStore';
 import { useGameEngine } from '../hooks/useGameEngine';
 import { joinRoom } from '../store/gameActions';
@@ -13,6 +14,7 @@ import { SniperGuess } from '../components/SniperGuess';
 
 export const GameRoom: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
+    const { getToken} = useAuth();  
   
   // 1. Initialize the centralized engine listeners
   useGameEngine();
@@ -25,11 +27,15 @@ export const GameRoom: React.FC = () => {
 
   // 2. Lifecycle management: Connect on mount, disconnect on leave
   useEffect(() => {
-    connect();
+     const setupSocket = async () => {
+        const token = await getToken({ template: "default" });
+        if (token) connect(token);
+      };
+    setupSocket();
     return () => {
       disconnect();
     };
-  }, [connect, disconnect]);
+  }, [connect, disconnect , getToken]);
 
   // 3. Once socket connects, automatically join the room ID from the URL
   useEffect(() => {

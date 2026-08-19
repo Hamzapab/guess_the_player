@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useGameStore } from '../store/useGameStore';
-import { useAuthStore } from '../store/authStore';
+  import { useUser } from "@clerk/clerk-react";
 import { submitQuestion, submitAnswer } from '../store/gameActions';
 
 // ==========================================
@@ -11,7 +11,8 @@ export const TurnHeader: React.FC = () => {
   const lives = useGameStore((state) => state.lives);
   
   // Grab the local user's ID to check if it's their turn
-  const localUserId = useAuthStore((state) => state.user?._id);
+  const { user } = useUser();
+  const localUserId = user?.id;
 
   const isMyTurn = currentTurn === localUserId;
   const myLives = lives[localUserId || ''] ?? 3;
@@ -52,7 +53,8 @@ export const InterrogationChat: React.FC = () => {
   
   const history = useGameStore((state) => state.history);
   const currentTurn = useGameStore((state) => state.currentTurn);
-  const localUserId = useAuthStore((state) => state.user?._id);
+  const { user } = useUser();
+  const localUserId = user?.id;
   console.log("turn :" + localUserId)
 
   const isMyTurn = currentTurn === localUserId;

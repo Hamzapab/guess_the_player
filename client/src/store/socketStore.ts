@@ -1,49 +1,43 @@
 import { create } from 'zustand';
 import { io, Socket } from 'socket.io-client';
-import { useAuthStore } from './authStore';
 
 interface SocketState {
   socket: Socket | null;
   isConnected: boolean;
-  connect: () => void;
+  connect: (token: string) => void;   // accept token from outside
   disconnect: () => void;
 }
 
-export const useSocketStore = create<SocketState>((set, get) => {
-  return {
-    socket: null,
-    isConnected: false,
+export const useSocketStore = create<SocketState>((set, get) => ({
+  socket: null,
+  isConnected: false,
 
-    connect: () => {
-      const { socket: existingSocket, isConnected } = get();
-      if (existingSocket || isConnected) return;
+  connect: (token: string) => {
+    const { socket: existingSocket, isConnected } = get();
+    if (existingSocket || isConnected) return;
 
-      const token = useAuthStore.getState().token;
-      if (!token) return;
+    const socket = io('http://localhost:5000', {
+      auth: { token },
+    });
 
-      const socket = io('http://localhost:5000', {
-        auth: { token },
-      });
+    socket.on('connect', () => {
+      console.log('Socket connected:', socket.id);
+      set({ isConnected: true });
+    });
 
-      socket.on('connect', () => {
-        console.log('Socket connected:', socket.id);
-        set({ isConnected: true });
-      });
+    socket.on('disconnect', () => {
+      console.log('Socket disconnected');
+      set({ isConnected: false });
+    });
 
-      socket.on('disconnect', () => {
-        console.log('Socket disconnected');
-        set({ isConnected: false });
-      });
+    set({ socket });
+  },
 
-      set({ socket });
-    },
-
-    disconnect: () => {
-      const { socket } = get();
-      if (socket) {
-        socket.disconnect();
-      }
-      set({ socket: null, isConnected: false });
-    },
-  };
-});
+  disconnect: () => {
+    const { socket } = get();
+    if (socket) {
+      socket.disconnect();
+    }
+    set({ socket: null, isConnected: false });
+  },
+}));
