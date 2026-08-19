@@ -3,14 +3,14 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface IGame extends Document {
   roomId: string;
   players: string[];
-  targetPlayers: Map<string, string>; // 
-  currentTurn: mongoose.Types.ObjectId;
+  targetPlayers: Map<string, string>; // UserID -> PlayerID (card held)
+  currentTurn: string;
   status: 'waiting' | 'active' | 'finished';
-  winner?: mongoose.Types.ObjectId;
+  winner?: string;
   language: 'en' | 'fr' | 'ar';
   history: Array<{
     action: string;
-    playerId: mongoose.Types.ObjectId;
+    playerId: string;
     timestamp: Date;
     details?: any;
   }>;
@@ -22,13 +22,13 @@ const GameSchema: Schema = new Schema({
   roomId: { type: String, required: true, unique: true },
   players: [{ type: String }],
   targetPlayers: { type: Map, of: String },
-  currentTurn: { type: Schema.Types.ObjectId, ref: 'User' },
+  currentTurn: { type: String },
   status: { 
     type: String, 
     enum: ['waiting', 'active', 'finished'], 
     default: 'waiting' 
   },
-  winner: { type: Schema.Types.ObjectId, ref: 'User' },
+  winner: { type : String },
   language: { 
     type: String, 
     enum: ['en', 'fr', 'ar'], 
@@ -36,7 +36,7 @@ const GameSchema: Schema = new Schema({
   },
   history: [{
     action: String,
-    playerId: { type: Schema.Types.ObjectId, ref: 'User' },
+    playerId: { type: String },
     timestamp: { type: Date, default: Date.now },
     details: Schema.Types.Mixed
   }],

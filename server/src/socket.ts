@@ -71,9 +71,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
         const currentUserId = user?.userId;
         const isAlreadyInRoom = game.players.includes(currentUserId);
-        console.log("The checK")
-        console.log("User : " + currentUserId);
-        console.log(isAlreadyInRoom);
+ 
 
         // 3. If this is a NEW player trying to join
         if (!isAlreadyInRoom) {
@@ -128,8 +126,8 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
           // Randomly assign target cards to each player
           const shuffledCards = [...randomPlayersCards].sort(() => 0.5 - Math.random());
-          const player1Id = game.players[0].toString();
-          const player2Id = game.players[1].toString();
+          const player1Id = game.players[0];
+          const player2Id = game.players[1];
 
           // Map the player's User ID to their secret assigned Footballer Card ID
           game.targetPlayers = new Map([
@@ -205,7 +203,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
         const currentUserId = user?.userId;
 
         // 1. Security Check: Is it actually this player's turn?
-        if (game.currentTurn.toString() !== currentUserId) {
+        if (game.currentTurn !== currentUserId) {
           socket.emit('error', { message: 'It is not your turn to ask a question!' });
           return;
         }
@@ -246,7 +244,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
         const currentUserId = user?.userId;
 
         // 1. Security Check: The person answering must NOT be the person whose turn it is
-        if (game.currentTurn.toString() === currentUserId) {
+        if (game.currentTurn === currentUserId) {
           socket.emit('error', { message: 'You cannot answer your own question!' });
           return;
         }
@@ -272,7 +270,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
         // If it was Player 1's turn, make it Player 2's turn, and vice versa.
         const player1Id = game.players[0];
         const player2Id = game.players[1];
-        game.currentTurn = (game.currentTurn.toString() === player1Id.toString()) ? player2Id : player1Id;
+        game.currentTurn = (game.currentTurn === player1Id) ? player2Id : player1Id;
 
         await game.save();
 
@@ -296,15 +294,15 @@ export const initializeSocket = (httpServer: HttpServer) => {
         const currentUserId = user?.userId;
 
         // Security Check: Is it their turn?
-        if (game.currentTurn.toString() !== currentUserId) {
+        if (game.currentTurn !== currentUserId) {
           socket.emit('error', { message: 'It is not your turn to guess!' });
           return;
         }
 
         const player1Id = game.players[0];
         const player2Id = game.players[1];
-        const opponentId = (currentUserId.toString() === player1Id.toString()) ? player2Id : player1Id;
-        const opponentTargetCardId = game.targetPlayers.get(opponentId.toString());
+        const opponentId = (currentUserId === player1Id) ? player2Id : player1Id;
+        const opponentTargetCardId = game.targetPlayers.get(opponentId);
       
 
         if (!opponentTargetCardId) return;
@@ -423,7 +421,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
             
             // Figure out who the winner is (the person who DIDN'T disconnect)
             const disconnectedPlayerId = user?.userId;
-            const winnerId = game.players.find(id => id.toString() !== disconnectedPlayerId);
+            const winnerId = game.players.find(id => id !== disconnectedPlayerId);
 
             // End the game
             game.status = 'finished';

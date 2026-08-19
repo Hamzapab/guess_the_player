@@ -19,23 +19,14 @@ export const GameRoom: React.FC = () => {
   // 1. Initialize the centralized engine listeners
   useGameEngine();
 
-  const connect = useSocketStore((state) => state.connect);
-  const disconnect = useSocketStore((state) => state.disconnect);
+  const socket = useSocketStore((state) => state.socket);
   const isConnected = useSocketStore((state) => state.isConnected);
   const status = useGameStore((state) => state.status);
 
 
   // 2. Lifecycle management: Connect on mount, disconnect on leave
-  useEffect(() => {
-     const setupSocket = async () => {
-        const token = await getToken();
-        if (token) connect(token);
-      };
-    setupSocket();
-    return () => {
-      disconnect();
-    };
-  }, [connect, disconnect , getToken]);
+  // !!!!!  GameRoom no longer connects/disconnects — App.tsx owns that lifecycle.
+  // It just reacts to the socket already being connected.
 
   // 3. Once socket connects, automatically join the room ID from the URL
   useEffect(() => {
@@ -44,7 +35,7 @@ export const GameRoom: React.FC = () => {
     if (isConnected && roomId) {
       joinRoom(roomId);
     }
-  }, [isConnected, roomId]);
+  }, [isConnected, socket, roomId]);
 
   if (!isConnected) {
     return <div className="loading-screen">Connecting to game server...</div>;
