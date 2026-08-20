@@ -147,7 +147,8 @@ export const initializeSocket = (httpServer: HttpServer) => {
           io.to(roomId).emit('game_start_signal', {
             roomId,
             currentTurn: game.currentTurn,
-            status: game.status
+            status: game.status,
+            lives: Object.fromEntries(game.remainingGuesses)
           });
         }
 
@@ -277,6 +278,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
         // 5. Broadcast the result and the new turn to both players
         io.to(roomId).emit('turn_resolved', {
           history: game.history,
+          lives: Object.fromEntries(game.remainingGuesses),
           newTurn: game.currentTurn
         });
 
@@ -333,15 +335,16 @@ export const initializeSocket = (httpServer: HttpServer) => {
             guessedPlayerId: guessedPlayerId,
             guessedPlayer : guessedPlayer,
             actualTargetId: opponentTargetCardId,
+            lives: Object.fromEntries(game.remainingGuesses),
             history: game.history
           });
 
         } else {
           // WRONG GUESS! Lose a life.
-
           // Get current lives (default to 3 if not set)
           let currentLives = game.remainingGuesses.get(currentUserId) ?? 3;
           currentLives -= 1;
+          console.log("wrong guess , remaining lives " + currentLives)
           game.remainingGuesses.set(currentUserId, currentLives);
 
           game.history.push({
@@ -366,6 +369,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
               isCorrectGuess: false,
               guessedPlayerId: guessedPlayerId,
               actualTargetId: opponentTargetCardId,
+              lives: Object.fromEntries(game.remainingGuesses),
               reason: 'out_of_lives',
               history: game.history
             });
@@ -379,6 +383,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
             io.to(roomId).emit('turn_resolved', {
               history: game.history,
               newTurn: game.currentTurn,
+              lives: Object.fromEntries(game.remainingGuesses),
               systemMessage: `Wrong guess! The opponent has ${currentLives} guesses remaining.`
             });
           }
@@ -440,6 +445,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
             io.to(roomId).emit('game_over', {
               winnerId: winnerId,
               reason: 'opponent_abandoned',
+              lives: Object.fromEntries(game.remainingGuesses),
               history: game.history
             });
           } else {

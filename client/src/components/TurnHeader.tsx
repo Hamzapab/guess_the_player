@@ -55,7 +55,7 @@ export const InterrogationChat: React.FC = () => {
   const currentTurn = useGameStore((state) => state.currentTurn);
   const { user } = useUser();
   const localUserId = user?.id;
-  console.log("turn :" + localUserId)
+
 
   const isMyTurn = currentTurn === localUserId;
   const lastHistoryItem = history[history.length - 1];
@@ -85,8 +85,17 @@ export const InterrogationChat: React.FC = () => {
               <div key={index} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                 {/* Chat Bubble */}
                 <div className={`max-w-[80%] p-3 rounded-2xl ${isMe ? 'bg-blue-600 text-white rounded-br-sm' : 'bg-gray-700 text-gray-200 rounded-bl-sm'}`}>
-                  {item.action === 'final_guess' && <span className="font-bold text-yellow-300 block text-xs uppercase mb-1">Final Guess Attempt</span>}
-                  is he {item.details.guessedPlayer}
+                  {item.action === 'question' && ( 
+                    <>
+                      {item.details.text}
+                    </>
+                  )}
+                  {item.action === 'final_guess' && ( 
+                    <>
+                      <span className="font-bold text-yellow-300 block text-xs uppercase mb-1">Final Guess Attempt</span>
+                      {item.details.guessedPlayer}
+                    </>
+                  )}
                 </div>
                 
                 {/* Answer Badge */}

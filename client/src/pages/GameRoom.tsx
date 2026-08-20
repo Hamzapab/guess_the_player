@@ -14,7 +14,7 @@ import { SniperGuess } from '../components/SniperGuess';
 
 export const GameRoom: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
-    const { getToken} = useAuth();  
+  
   
   // 1. Initialize the centralized engine listeners
   useGameEngine();

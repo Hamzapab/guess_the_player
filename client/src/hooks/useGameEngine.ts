@@ -24,6 +24,7 @@ export const useGameEngine = () => {
         status: data.status,
         currentTurn: data.currentTurn,
         isOpponentDisconnected: false,
+        lives: data.lives, 
       });
 
       // Ask the server for the secret card
@@ -48,6 +49,7 @@ export const useGameEngine = () => {
       setRoomState({
         history: data.history,
         currentTurn: data.newTurn,
+        lives: data.lives, 
       });
       
       // Tip: If data.systemMessage exists (e.g., "Lost a life!"), 
@@ -64,6 +66,7 @@ export const useGameEngine = () => {
         winnerId: data.winnerId,
         history: data.history,
         isOpponentDisconnected: false,
+        lives: data.lives, 
       });
 
       // Special alert for abandonment
