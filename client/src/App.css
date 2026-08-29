@@ -1,37 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  margin: 0 ;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+}
+*{
+  box-sizing: border-box !important;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
 
 .card {
   padding: 2em;
@@ -42,9 +22,63 @@
 }
 
 
+/* Font */
+
+body{
+  font-family: "Lexend", sans-serif;
+  font-style: normal;
+}
+
 /***************** Custom Clerk UI  ******************/
 
-.cl-footerAction{
+.cl-footerAction , .cl-internal-1dauvpw, .cl-footer{
   display: none;
 }
 
+.cl-card , .cl-rootBox , .cl-cardBox {
+  border: none;
+  background: none;
+  outline: none;
+  padding:0;
+  width: 100%;
+  text-align: start;
+}
+.cl-internal-x0fvpz{
+  margin-bottom: 30px;
+  text-align: start;
+}
+
+.cl-internal-kjqg39{
+  margin-bottom: 20px;
+  color: white;
+}
+.cl-headerSubtitle{
+  color: #92A4C9;
+  margin-bottom: 10px;
+}
+
+.cl-formFieldLabel{
+  color:white;
+  padding-bottom: 5px;
+}
+
+.cl-formFieldInput{
+  background-color: #111722;
+  color: white;
+}
+
+.cl-formFieldInput::placeholder {
+  color: #92A4C9;
+}
+
+.cl-formButtonPrimary{
+  background-color: #135BEC;
+}
+
+
+/***************** Hero Page  ******************/
+#hero{
+  background-image: url('./assets/hero_bg_overlay.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+}

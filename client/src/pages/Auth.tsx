@@ -1,63 +1,105 @@
 import { SignIn, SignUp } from "@clerk/clerk-react";
 import { useState } from "react";
+import logo from "../assets/logo.png";
+import lovedbyfan from "../assets/lovedbyfan.png";
+// import heroBg from "../assets/hero_bg_overlay.png";
+
+
+
+// Header
+
+const Header = () => {
+  return (
+    <div className=" bg-[#101622]  text-white">
+      <div className="container flex justify-between mx-auto py-2">
+        <div className="flex  items-center gap-2">
+          <img src={logo} alt="logo" />
+          <h1>Guess The Player</h1>
+        </div>
+        <div className="flex  items-center gap-4 text-xs ">
+          <p>Leaderboard</p>
+          <button className="bg-blue-500 py-1 px-4 rounded-md text-xs cursor-pointer">Play as Guest</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const HeroPage = () => {
+  return (
+    <div className=" min-w-0 text-center mt-20 md:flex-1 md:mt-0 md:ps-4 md:text-start">
+      <div>
+        <h2 className="text-5xl font-bold text-white mb-5">
+          <span>Test Your</span> <br></br>
+          <span className="text-transparent bg-clip-text bg-linear-to-r from-[#135BEC] to-[#22D3EE]"> Football IQ </span>
+        </h2>
+        <p className="text-[#92A4C9] mb-5 font-light">
+          Join thousands of fans in the ultimate guessing <br></br>
+          game. Challenge your friends in real-time
+        </p>
+        <img className="w-80 mx-auto md:mx-0" src={lovedbyfan} alt="loved by fan" />
+      </div>
+    </div>
+  )
+}
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
+    <div id="hero" className="flex flex-col  h-dvh  bg-top">
+      <Header />
+      <div className="container flex-1  flex flex-col gap-6 items-center md:justify-around md:flex-row md:gap-8  mx-auto">
+        <HeroPage />
+        <div className="flex-1  min-w-0 rounded">
+          <div className="rounded-lg shadow-md p-6 py-8 max-w-100 mx-auto text-white bg-[#192233]">
+            {isLogin ? (
+              <SignIn
+                appearance={{
+                  theme: 'simple',
+                  elements: {
+                    footerAction: "hidden",
+                  },
+                }}
+              />
+            ) : (
+              <SignUp
+                appearance={{
+                  theme: 'simple',
+                  elements: {
+                    footerAction: "hidden",
+                  },
+                }}
+              />
+            )}
 
-        <h1 className="text-3xl font-bold mb-6 text-center">
-          {isLogin ? "Login" : "Sign Up"}
-        </h1>
-
-        {isLogin ? (
-          <SignIn
-            appearance={{
-              theme: 'simple',
-              elements: {
-                footerAction: "hidden",
-              },
-            }}
-          />
-        ) : (
-          <SignUp
-            appearance={{
-              theme: 'simple',
-              elements: {
-                footerAction: "hidden",
-              },
-            }}
-          />
-        )}
-
-        <div className="text-center mt-4">
-          {isLogin ? (
-            <p className="text-sm">
-              Don't have an account?{" "}
-              <button
-                type="button"
-                onClick={() => setIsLogin(false)}
-                className="text-blue-600 hover:underline"
-              >
-                Sign up
-              </button>
-            </p>
-          ) : (
-            <p className="text-sm">
-              Already have an account?{" "}
-              <button
-                type="button"
-                onClick={() => setIsLogin(true)}
-                className="text-blue-600 hover:underline"
-              >
-                Sign in
-              </button>
-            </p>
-          )}
+            <div className="text-center mt-4">
+              {isLogin ? (
+                <p className="text-sm">
+                  Don't have an account?{" "}
+                  <button
+                    type="button"
+                    onClick={() => setIsLogin(false)}
+                    className="text-blue-600 hover:underline"
+                  >
+                    Sign up
+                  </button>
+                </p>
+              ) : (
+                <p className="text-sm">
+                  Already have an account?{" "}
+                  <button
+                    type="button"
+                    onClick={() => setIsLogin(true)}
+                    className="text-blue-600 hover:underline"
+                  >
+                    Sign in
+                  </button>
+                </p>
+              )}
+            </div>
+          </div>
         </div>
-
       </div>
     </div>
   );
