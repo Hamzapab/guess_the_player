@@ -1,24 +1,27 @@
 import { SignIn, SignUp } from "@clerk/clerk-react";
 import { useState } from "react";
+import LanguageDropdown from "../components/LanguageToggle";
 import logo from "../assets/logo.png";
 import lovedbyfan from "../assets/lovedbyfan.png";
-// import heroBg from "../assets/hero_bg_overlay.png";
-
-
+import { useTranslation } from 'react-i18next';
 
 // Header
-
 const Header = () => {
+  const { t } = useTranslation();
+
   return (
     <div className=" bg-[#101622]  text-white">
       <div className="container flex justify-between mx-auto py-2">
         <div className="flex  items-center gap-2">
           <img src={logo} alt="logo" />
-          <h1>Guess The Player</h1>
+          <h1>{t("header.title")}</h1>
         </div>
         <div className="flex  items-center gap-4 text-xs ">
-          <p>Leaderboard</p>
-          <button className="bg-blue-500 py-1 px-4 rounded-md text-xs cursor-pointer">Play as Guest</button>
+          <LanguageDropdown/>
+          <p>{t("header.leaderboard")}</p>
+          <button className="bg-blue-500 py-1 px-4 rounded-md text-xs cursor-pointer">
+            {t("header.guest")}
+          </button>
         </div>
       </div>
     </div>
@@ -26,16 +29,19 @@ const Header = () => {
 }
 
 const HeroPage = () => {
+  const { t } = useTranslation();
+
   return (
     <div className=" min-w-0 text-center mt-20 md:flex-1 md:mt-0 md:ps-4 md:text-start">
       <div>
         <h2 className="text-5xl font-bold text-white mb-5">
-          <span>Test Your</span> <br></br>
-          <span className="text-transparent bg-clip-text bg-linear-to-r from-[#135BEC] to-[#22D3EE]"> Football IQ </span>
+          <span>{t("hero.testYour")}</span> <br />
+          <span className="text-transparent bg-clip-text bg-linear-to-r from-[#135BEC] to-[#22D3EE]">
+            {t("hero.footballIQ")}
+          </span>
         </h2>
         <p className="text-[#92A4C9] mb-5 font-light">
-          Join thousands of fans in the ultimate guessing <br></br>
-          game. Challenge your friends in real-time
+          {t("hero.description")}
         </p>
         <img className="w-80 mx-auto md:mx-0" src={lovedbyfan} alt="loved by fan" />
       </div>
@@ -45,6 +51,7 @@ const HeroPage = () => {
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const { t } = useTranslation();
 
   return (
     <div id="hero" className="flex flex-col  h-dvh  bg-top">
@@ -76,24 +83,24 @@ const Auth = () => {
             <div className="text-center mt-4">
               {isLogin ? (
                 <p className="text-sm">
-                  Don't have an account?{" "}
+                  {t("auth.noAccount")}{" "}
                   <button
                     type="button"
                     onClick={() => setIsLogin(false)}
                     className="text-blue-600 hover:underline"
                   >
-                    Sign up
+                    {t("auth.signUp")}
                   </button>
                 </p>
               ) : (
                 <p className="text-sm">
-                  Already have an account?{" "}
+                  {t("auth.haveAccount")}{" "}
                   <button
                     type="button"
                     onClick={() => setIsLogin(true)}
                     className="text-blue-600 hover:underline"
                   >
-                    Sign in
+                    {t("auth.signIn")}
                   </button>
                 </p>
               )}

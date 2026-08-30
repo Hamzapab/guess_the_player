@@ -1,0 +1,18 @@
+{
+  "header": {
+    "title": "Guess The Player",
+    "leaderboard": "Leaderboard",
+    "guest": "Play as Guest"
+  },
+  "hero": {
+    "testYour": "Test Your",
+    "footballIQ": "Football IQ",
+    "description": "Join thousands of fans in the ultimate guessing game. Challenge your friends in real-time"
+  },
+  "auth": {
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "haveAccount": "Already have an account?",
+    "signIn": "Sign in"
+  }
+}

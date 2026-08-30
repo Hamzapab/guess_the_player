@@ -1,0 +1,18 @@
+{
+  "header": {
+    "title": "Devine le Joueur",
+    "leaderboard": "Classement",
+    "guest": "Jouer en invité"
+  },
+  "hero": {
+    "testYour": "Teste ton",
+    "footballIQ": "Q.I. Football",
+    "description": "Rejoins des milliers de fans dans le jeu de devinettes ultime. Défie tes amis en temps réel"
+  },
+  "auth": {
+    "noAccount": "Tu n’as pas de compte ?",
+    "signUp": "Inscris-toi",
+    "haveAccount": "Tu as déjà un compte ?",
+    "signIn": "Connecte-toi"
+  }
+}
