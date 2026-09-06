@@ -1,11 +1,11 @@
 
 import { BrowserRouter } from 'react-router-dom'
 import './i18n.ts';
-import App from './App.tsx'
-
 import { ClerkProvider } from '@clerk/clerk-react'
 import { frFR , arSA , enUS} from '@clerk/localizations'
 import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react';
+import App from './App.tsx'
 
 
 
@@ -25,6 +25,18 @@ export default function ClerkWrapper() {
   const { i18n } = useTranslation();
   const currentLocale =
     localizationMap[i18n.language as keyof typeof localizationMap] || enUS;
+
+  useEffect(() => {
+    // Set direction on <html> whenever language changes
+    document.documentElement.setAttribute(
+      "dir",
+      i18n.language === "ar" ? "rtl" : "ltr"
+    );
+    document.documentElement.setAttribute(
+      "lang",
+      i18n.language
+    );
+  }, [i18n.language]);
 
   return (
     <ClerkProvider

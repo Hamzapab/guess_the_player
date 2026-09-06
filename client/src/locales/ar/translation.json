@@ -13,6 +13,18 @@
     "noAccount": "ليس لديك حساب؟",
     "signUp": "سجّل",
     "haveAccount": "هل لديك حساب بالفعل؟",
-    "signIn": "سجّل الدخول"
+    "signIn": "سجّل الدخول",
+     "profile": "الملف الشخصي",
+    "signOut": "تسجيل الخروج"
+  },
+   "home": {
+     "challenge": "اختبر معرفتك بكرة القدم ضد أصدقائك.",
+     "welcome": "مرحباً",
+     "selectLeague": "اختر الدوري / اللغة",
+    "creatingArena": "جارٍ إنشاء الساحة...",
+    "createMatch": "إنشاء مباراة",
+    "joinMatch": "انضم إلى مباراة",
+    "enterRoomCode": "أدخل رمز الغرفة",
+    "joinArena": "انضم إلى الساحة"
   }
 }

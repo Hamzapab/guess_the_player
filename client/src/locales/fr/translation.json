@@ -13,6 +13,18 @@
     "noAccount": "Tu n’as pas de compte ?",
     "signUp": "Inscris-toi",
     "haveAccount": "Tu as déjà un compte ?",
-    "signIn": "Connecte-toi"
+    "signIn": "Connecte-toi",
+    "profile": "Profil",
+    "signOut": "Se déconnecter"
+  },
+   "home": {
+    "challenge": "Teste tes connaissances en football contre tes amis.",
+    "welcome": "Bienvenue" ,
+    "selectLeague": "Sélectionner Ligue / Langue",
+    "creatingArena": "Création de l'arène...",
+    "createMatch": "Créer un match",
+    "joinMatch": "Rejoindre un match",
+    "enterRoomCode": "Entrer le code de la salle",
+    "joinArena": "Rejoindre l'arène"
   }
 }

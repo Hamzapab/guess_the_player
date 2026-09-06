@@ -1,32 +1,10 @@
 import { SignIn, SignUp } from "@clerk/clerk-react";
 import { useState } from "react";
-import LanguageDropdown from "../components/LanguageToggle";
-import logo from "../assets/logo.png";
 import lovedbyfan from "../assets/lovedbyfan.png";
 import { useTranslation } from 'react-i18next';
+import { Header } from "../components/Header";
 
-// Header
-const Header = () => {
-  const { t } = useTranslation();
 
-  return (
-    <div className=" bg-[#101622]  text-white">
-      <div className="container flex justify-between mx-auto py-2">
-        <div className="flex  items-center gap-2">
-          <img src={logo} alt="logo" />
-          <h1>{t("header.title")}</h1>
-        </div>
-        <div className="flex  items-center gap-4 text-xs ">
-          <LanguageDropdown/>
-          <p>{t("header.leaderboard")}</p>
-          <button className="bg-blue-500 py-1 px-4 rounded-md text-xs cursor-pointer">
-            {t("header.guest")}
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 const HeroPage = () => {
   const { t } = useTranslation();

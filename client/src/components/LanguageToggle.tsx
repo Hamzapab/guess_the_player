@@ -14,7 +14,7 @@ function LanguageDropdown() {
       className="text-shadow-2xs px-2 py-1  rounded-lg bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-700"
     >
       <option value="en">EN</option>
-      <option value="ar">AR</option>
+      <option value="ar">{i18n.language === 'en' || i18n.language === 'fr'  ? 'AR' : 'ع'}</option>
       <option value="fr">FR</option>
     </select>
   );
