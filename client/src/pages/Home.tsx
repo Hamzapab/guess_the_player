@@ -5,6 +5,7 @@ import { createGame } from '../api/gameApi';
 import { Header } from "../components/Header";
 import { CirclePlus , DoorOpen } from "lucide-react";
 import { useTranslation } from 'react-i18next';
+import { Footer } from '../components/Footer';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -49,9 +50,9 @@ const Home = () => {
   const username = user?.username || "Guest";
 
   return (
-    <>
+    <div className='min-h-screen flex flex-col'>
       <Header />
-      <div className="min-h-screen bg-gradient-to-br from-[#030f27] to-[#041937] flex items-center justify-center p-4">       
+      <div className="min-h-screen flex-1 bg-gradient-to-br from-[#030f27] to-[#041937] flex items-center justify-center p-4">       
         <div className="w-full max-w-5xl">
           {/* Header Section */}
           <div className="text-center mb-12">
@@ -144,7 +145,8 @@ const Home = () => {
           </div>
         </div>
       </div>
-    </>
+      <Footer />
+    </div>
   );
 };
 

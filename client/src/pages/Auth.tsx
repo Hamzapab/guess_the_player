@@ -3,6 +3,7 @@ import { useState } from "react";
 import lovedbyfan from "../assets/lovedbyfan.png";
 import { useTranslation } from 'react-i18next';
 import { Header } from "../components/Header";
+import { Footer } from "../components/Footer";
 
 
 
@@ -86,6 +87,7 @@ const Auth = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
