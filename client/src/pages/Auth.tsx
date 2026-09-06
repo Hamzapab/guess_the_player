@@ -35,7 +35,7 @@ const Auth = () => {
   return (
     <>
       <Header />
-      <div id="hero" className="flex flex-col  h-dvh  bg-top">
+      <div id="hero" className="flex flex-col  py-5 min-h-dvh  bg-top">
         <div className="container flex-1  flex flex-col gap-6 items-center md:justify-around md:flex-row md:gap-8  mx-auto">
           <HeroPage />
           <div className="flex-1  min-w-0 rounded">

@@ -1,8 +1,8 @@
-
+import { useNavigate } from 'react-router-dom';
 import { Circle, X, HelpCircle, AlertTriangle } from 'lucide-react';
 
 export const Footer = () => {
- 
+   const navigate = useNavigate();
   
 
 
@@ -23,7 +23,9 @@ export const Footer = () => {
 
           {/* Middle section: Quick Links */}
           <div className="flex items-center gap-6 text-sm font-medium text-slate-400">
-            <button className="flex items-center gap-1.5 hover:text-emerald-400 transition-colors">
+            <button className="flex items-center gap-1.5 cursor-pointer hover:text-emerald-400 transition-colors"
+            onClick={() => navigate("/how-to-play")}
+            >
               <HelpCircle size={16} />
               <span>How to Play</span>
             </button>

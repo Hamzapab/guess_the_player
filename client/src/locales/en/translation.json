@@ -26,5 +26,22 @@
     "joinMatch": "Join Match",
     "enterRoomCode": "Enter Room Code",
     "joinArena": "Join Arena"
+  },
+  "howToPlay": {
+    "title": "How to Play",
+    "secretPlayer": "Your Secret Player",
+    "askQuestions": "Ask Smart Questions",
+    "answerTruthfully": "Answer Truthfully",
+    "finalGuess": "The Final Guess",
+    "connectionRules": "Connection Rules",
+    "intro": "Outsmart your opponent in this real-time multiplayer football guessing game. Find out who their secret player is before they guess yours!",
+    "secretCard": "When the match starts, the server privately assigns you a secret target card (a real-world footballer). Your job is to keep their identity hidden while figuring out your opponent's card.",
+    "askTurn": "On your turn, ask a YES or NO question to narrow down the possibilities.",
+    "example1": "Does your player play in the Premier League?",
+    "example2": "Is your player from South America?",
+    "answerTurn": "When it's your opponent's turn to ask, you must answer their question with a YES or a NO based on your secret card. The history log keeps track of everything asked.",
+    "finalGuessDesc": "Think you know exactly who it is? Use your turn to make a final guess. If you are right, you instantly win the match! Be careful—guessing wrong might cost you the game.",
+    "connectionDesc": "If a player disconnects or closes their browser, they have exactly 30 seconds to return to the room. If they fail to reconnect in time, they automatically forfeit the match and the remaining player is awarded the victory.",
+    "backLobby": "Back to Lobby"
   }
 }

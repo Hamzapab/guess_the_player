@@ -26,5 +26,22 @@
     "joinMatch": "Rejoindre un match",
     "enterRoomCode": "Entrer le code de la salle",
     "joinArena": "Rejoindre l'arène"
+  },
+  "howToPlay": {
+    "title": "Comment jouer",
+    "secretPlayer": "Ton joueur secret",
+    "askQuestions": "Pose des questions intelligentes",
+    "answerTruthfully": "Réponds honnêtement",
+    "finalGuess": "La supposition finale",
+    "connectionRules": "Règles de connexion",
+    "intro": "Déjoue ton adversaire dans ce jeu multijoueur en temps réel de devinettes sur le football. Découvre qui est son joueur secret avant qu'il ne devine le tien !",
+    "secretCard": "Lorsque le match commence, le serveur t'attribue secrètement une carte cible (un footballeur réel). Ton rôle est de garder son identité cachée tout en découvrant la carte de ton adversaire.",
+    "askTurn": "À ton tour, pose une question OUI ou NON pour réduire les possibilités.",
+    "example1": "Ton joueur joue-t-il en Premier League ?",
+    "example2": "Ton joueur vient-il d'Amérique du Sud ?",
+    "answerTurn": "Quand c'est au tour de ton adversaire de poser une question, tu dois répondre par OUI ou NON en fonction de ta carte secrète. L'historique garde une trace de toutes les questions.",
+    "finalGuessDesc": "Tu penses savoir exactement qui c'est ? Utilise ton tour pour faire une supposition finale. Si tu as raison, tu gagnes immédiatement le match ! Attention—une mauvaise supposition peut te coûter la partie.",
+    "connectionDesc": "Si un joueur se déconnecte ou ferme son navigateur, il a exactement 30 secondes pour revenir dans la salle. S'il échoue, il perd automatiquement et l'autre joueur est déclaré vainqueur.",
+    "backLobby": "Retour au lobby"
   }
 }

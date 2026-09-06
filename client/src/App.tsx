@@ -6,6 +6,7 @@ import { useSocketStore } from './store/socketStore';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Auth from './pages/Auth';
+import { HowToPlay } from './pages/HowToPlay';
 import { GameRoom } from './pages/GameRoom';
 import './App.css';
 
@@ -29,6 +30,7 @@ function App() {
     <div className="min-h-screen bg-gray-100 text-gray-900 relative">
       <Routes>
         <Route path="/auth" element={<Auth />} />
+        <Route path="/how-to-play" element={<HowToPlay />} />
         
         {/* Protected Section */}
         <Route element={<ProtectedRoute />}>
