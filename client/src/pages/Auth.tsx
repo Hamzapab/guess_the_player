@@ -33,62 +33,66 @@ const Auth = () => {
   const { t } = useTranslation();
 
   return (
-    <div id="hero" className="flex flex-col  h-dvh  bg-top">
+    <>
       <Header />
-      <div className="container flex-1  flex flex-col gap-6 items-center md:justify-around md:flex-row md:gap-8  mx-auto">
-        <HeroPage />
-        <div className="flex-1  min-w-0 rounded">
-          <div className="rounded-lg shadow-md p-6 py-8 max-w-100 mx-auto text-white bg-[#192233]">
-            {isLogin ? (
-              <SignIn
-                appearance={{
-                  theme: 'simple',
-                  elements: {
-                    footerAction: "hidden",
-                  },
-                }}
-              />
-            ) : (
-              <SignUp
-                appearance={{
-                  theme: 'simple',
-                  elements: {
-                    footerAction: "hidden",
-                  },
-                }}
-              />
-            )}
-
-            <div className="text-center mt-4">
+      <div id="hero" className="flex flex-col  h-dvh  bg-top">
+        <div className="container flex-1  flex flex-col gap-6 items-center md:justify-around md:flex-row md:gap-8  mx-auto">
+          <HeroPage />
+          <div className="flex-1  min-w-0 rounded">
+            <div className="rounded-lg shadow-md p-6 py-8 max-w-100 mx-auto text-white bg-[#192233]">
               {isLogin ? (
-                <p className="text-sm">
-                  {t("auth.noAccount")}{" "}
-                  <button
-                    type="button"
-                    onClick={() => setIsLogin(false)}
-                    className="text-blue-600 hover:underline"
-                  >
-                    {t("auth.signUp")}
-                  </button>
-                </p>
+                <SignIn
+                  appearance={{
+                    theme: 'simple',
+                    elements: {
+                      footerAction: "hidden",
+                    },
+                  }}
+                />
               ) : (
-                <p className="text-sm">
-                  {t("auth.haveAccount")}{" "}
-                  <button
-                    type="button"
-                    onClick={() => setIsLogin(true)}
-                    className="text-blue-600 hover:underline"
-                  >
-                    {t("auth.signIn")}
-                  </button>
-                </p>
+                <SignUp
+                  appearance={{
+                    theme: 'simple',
+                    elements: {
+                      footerAction: "hidden",
+                    },
+                  }}
+                />
               )}
+
+              <div className="text-center mt-4">
+                {isLogin ? (
+                  <p className="text-sm">
+                    {t("auth.noAccount")}{" "}
+                    <button
+                      type="button"
+                      onClick={() => setIsLogin(false)}
+                      className="text-blue-600 hover:underline"
+                    >
+                      {t("auth.signUp")}
+                    </button>
+                  </p>
+                ) : (
+                  <p className="text-sm">
+                    {t("auth.haveAccount")}{" "}
+                    <button
+                      type="button"
+                      onClick={() => setIsLogin(true)}
+                      className="text-blue-600 hover:underline"
+                    >
+                      {t("auth.signIn")}
+                    </button>
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>
+
       </div>
       <Footer />
-    </div>
+    </>
+
   );
 };
 
