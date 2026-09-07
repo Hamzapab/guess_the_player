@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom'; 
 import { useSocketStore } from '../store/socketStore';
-import { useAuth } from "@clerk/clerk-react"; 
 import { useGameStore } from '../store/useGameStore';
 import { useGameEngine } from '../hooks/useGameEngine';
 import { joinRoom } from '../store/gameActions';
@@ -11,6 +10,7 @@ import { TurnHeader } from '../components/TurnHeader';
 import { TargetCard } from '../components/TargetCard';
 import { InterrogationChat } from '../components/TurnHeader';
 import { SniperGuess } from '../components/SniperGuess';
+import { WaitingLobby } from './LobbyWait';
 
 export const GameRoom: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -42,7 +42,7 @@ export const GameRoom: React.FC = () => {
   }
 
   if (status === 'waiting') {
-    return <div className="lobby-screen">Waiting for an opponent to join...</div>;
+    return <WaitingLobby />;
   }
 
   return (

@@ -43,5 +43,12 @@
     "finalGuessDesc": "Tu penses savoir exactement qui c'est ? Utilise ton tour pour faire une supposition finale. Si tu as raison, tu gagnes immédiatement le match ! Attention—une mauvaise supposition peut te coûter la partie.",
     "connectionDesc": "Si un joueur se déconnecte ou ferme son navigateur, il a exactement 30 secondes pour revenir dans la salle. S'il échoue, il perd automatiquement et l'autre joueur est déclaré vainqueur.",
     "backLobby": "Retour au lobby"
+  },
+    "gameRoom": {
+    "waitingOpponent": "En attente de l'adversaire...",
+    "autoStart": "Le match commence automatiquement dès que le joueur 2 rejoint.",
+    "roomCode": "Code de la salle",
+    "cancelSearch": "Annuler la recherche",
+    "copyRoomCode": "Copier le code de la salle"
   }
 }

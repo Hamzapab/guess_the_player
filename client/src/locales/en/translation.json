@@ -43,5 +43,12 @@
     "finalGuessDesc": "Think you know exactly who it is? Use your turn to make a final guess. If you are right, you instantly win the match! Be careful—guessing wrong might cost you the game.",
     "connectionDesc": "If a player disconnects or closes their browser, they have exactly 30 seconds to return to the room. If they fail to reconnect in time, they automatically forfeit the match and the remaining player is awarded the victory.",
     "backLobby": "Back to Lobby"
+  },
+  "gameRoom": {
+    "waitingOpponent": "Waiting for Opponent...",
+    "autoStart": "The match starts automatically as soon as Player 2 joins.",
+    "roomCode": "Room Code",
+    "cancelSearch": "Cancel Search",
+    "copyRoomCode": "Copy Room Code"
   }
 }
