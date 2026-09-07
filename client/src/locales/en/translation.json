@@ -50,5 +50,15 @@
     "roomCode": "Room Code",
     "cancelSearch": "Cancel Search",
     "copyRoomCode": "Copy Room Code"
+  },
+  "gameOver": {
+    "victory": "Match Victory",
+    "congratulations": "Congratulations!",
+    "quitWin": "Congratulations! You have won, your opponent quit the match.",
+    "deductionWin": "Incredible deduction skills! You identified your opponent's target card first.",
+    "defeat": "Defeat",
+    "gameOver": "Game Over",
+    "lossMessage": "Better luck next time! Your opponent correctly guessed your secret player first.",
+    "returnHome": "Return to Home"
   }
 }

@@ -50,5 +50,15 @@
     "roomCode": "Code de la salle",
     "cancelSearch": "Annuler la recherche",
     "copyRoomCode": "Copier le code de la salle"
+  },
+    "gameOver": {
+    "victory": "Victoire du match",
+    "congratulations": "Félicitations !",
+    "quitWin": "Félicitations ! Tu as gagné, ton adversaire a quitté le match.",
+    "deductionWin": "Compétences de déduction incroyables ! Tu as identifié la carte cible de ton adversaire en premier.",
+    "defeat": "Défaite",
+    "gameOver": "Fin du jeu",
+    "lossMessage": "Bonne chance la prochaine fois ! Ton adversaire a deviné correctement ton joueur secret en premier.",
+    "returnHome": "Retour à l'accueil"
   }
 }

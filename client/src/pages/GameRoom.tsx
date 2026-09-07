@@ -5,13 +5,13 @@ import { useGameStore } from '../store/useGameStore';
 import { useGameEngine } from '../hooks/useGameEngine';
 import { joinRoom } from '../store/gameActions';
 
-// TO DO : Implement these 
 import { TurnHeader } from '../components/TurnHeader';
 import { TargetCard } from '../components/TargetCard';
 import { InterrogationChat } from '../components/TurnHeader';
 import { SniperGuess } from '../components/SniperGuess';
 import { WaitingLobby } from './LobbyWait';
 import { GameRoomHeader } from '../components/GameRoomHead';
+import { GameOverModal } from '../components/GameOverModal';
 
 export const GameRoom: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -60,7 +60,7 @@ export const GameRoom: React.FC = () => {
         {/* Dynamic Action Center */}
         <div className="action-center">
           {status === 'finished' ? (
-            <div className="game-over-banner">Game Over!</div>
+            <GameOverModal />
           ) : (
             <>
               <InterrogationChat />

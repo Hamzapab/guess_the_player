@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 
 export interface HistoryItem {
-  action: 'question' | 'answer' | 'final_guess';
+  action: 'question' | 'answer' | 'final_guess' | "surrender";
   playerId: string;
   timestamp: Date;
   details: {

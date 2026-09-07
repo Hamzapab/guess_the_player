@@ -5,6 +5,7 @@ import { useSocketStore } from '../store/socketStore';
 import { Header } from '../components/Header';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { quitSearch } from '../store/gameActions';
 
 export const WaitingLobby = () => {
   const { t } = useTranslation();
@@ -16,7 +17,7 @@ export const WaitingLobby = () => {
 
   const handleCancel = () => {
     if (socket && roomId) {
-      socket.emit('leave_room', { roomId });
+      quitSearch();
       navigate("/")
     }
     // Reset back 

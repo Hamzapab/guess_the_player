@@ -211,6 +211,30 @@ export const initializeSocket = (httpServer: HttpServer) => {
       }
     });
 
+    // Quiting Search 
+     socket.on('quit_search', async ({ roomId }: { roomId: string }) => {
+      try {
+        const game = await Game.findOne({ roomId });
+        if (!game || game.status === 'finished') {
+          socket.emit('error', { message: 'Game not found or already finished.' });
+          return;
+        }
+
+
+
+         await Game.deleteOne({ roomId });
+
+
+        // Clean up socket room
+        socket.leave(roomId);
+        socket.data.roomId = undefined;
+
+      } catch (error) {
+        console.error('Error handlisng quit game:', error);
+        socket.emit('error', { message: 'Failed to quit game.' });
+      }
+    });
+
     // Event for a player to safely discover their own assigned card without exposure
     socket.on('get_my_target_card', async ({ roomId }: { roomId: string }) => {
       console.log("Server emit target card")

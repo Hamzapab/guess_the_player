@@ -2,8 +2,8 @@ import { LogOut } from 'lucide-react';
 import logo from "../assets/logo.png";
 import { useTranslation } from 'react-i18next';
 import { useSocketStore } from '../store/socketStore';
-import { useGameStore } from '../store/useGameStore';
 import { useNavigate } from 'react-router-dom';
+import { quitGame } from '../store/gameActions';
 
 
 
@@ -11,12 +11,11 @@ import { useNavigate } from 'react-router-dom';
 export const GameRoomHeader = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const roomId = useGameStore((state) => state.roomId);
   const socket = useSocketStore((state) => state.socket);
 
   const handleCancel = () => {
     if (socket) {
-       socket.emit('quit_game', { roomId });
+       quitGame();
       navigate("/")
     }
   };
