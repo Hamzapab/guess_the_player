@@ -45,12 +45,12 @@ export const initializeSocket = (httpServer: HttpServer) => {
   });
 
   io.on('connection', (socket: Socket) => {
-    const user = socket.data.user; 
+    const user = socket.data.user;
     console.log(`User connected: ${user.userId}`);
 
-     socket.onAny((eventName, ...args) => {
-    console.log(`[DEBUG] Event received: ${eventName}`, args);
-  });
+    socket.onAny((eventName, ...args) => {
+      console.log(`[DEBUG] Event received: ${eventName}`, args);
+    });
 
     socket.on('join_room', async ({ roomId }: { roomId: string }) => {
       console.log("Join event tirggered")
@@ -71,7 +71,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
         const currentUserId = user?.userId;
         const isAlreadyInRoom = game.players.includes(currentUserId);
- 
+
 
         // 3. If this is a NEW player trying to join
         if (!isAlreadyInRoom) {
@@ -164,9 +164,56 @@ export const initializeSocket = (httpServer: HttpServer) => {
       }
     });
 
+    // Player Quiting
+
+    socket.on('quit_game', async ({ roomId }: { roomId: string }) => {
+      try {
+        const game = await Game.findOne({ roomId });
+        if (!game || game.status === 'finished') {
+          socket.emit('error', { message: 'Game not found or already finished.' });
+          return;
+        }
+
+        const currentUserId = user?.userId;
+
+        // Determine winner (the other player)
+        const opponentId = game.players.find(id => id !== currentUserId);
+
+        // End the game
+        game.status = 'finished';
+        game.winner = opponentId;
+
+        game.history.push({
+          action: 'surrender',
+          playerId: currentUserId,
+          timestamp: new Date(),
+          details: { reason: 'player_quit' }
+        });
+
+        await game.save();
+
+        // Notify both players
+        io.to(roomId).emit('game_over', {
+          winnerId: opponentId,
+          reason: 'opponent_surrendered',
+          surrenderedBy: currentUserId,
+          lives: Object.fromEntries(game.remainingGuesses),
+          history: game.history
+        });
+
+        // Clean up socket room
+        socket.leave(roomId);
+        socket.data.roomId = undefined;
+
+      } catch (error) {
+        console.error('Error handlisng quit game:', error);
+        socket.emit('error', { message: 'Failed to quit game.' });
+      }
+    });
+
     // Event for a player to safely discover their own assigned card without exposure
     socket.on('get_my_target_card', async ({ roomId }: { roomId: string }) => {
-      console.log("Server emit target card" )
+      console.log("Server emit target card")
       try {
         const game = await Game.findOne({ roomId });
         if (!game || !game.targetPlayers) {
@@ -288,7 +335,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
       }
     });
 
-    socket.on('submit_final_guess', async ({ roomId, guessedPlayerId , guessedPlayer }: { roomId: string, guessedPlayerId: string , guessedPlayer : string }) => {
+    socket.on('submit_final_guess', async ({ roomId, guessedPlayerId, guessedPlayer }: { roomId: string, guessedPlayerId: string, guessedPlayer: string }) => {
       try {
         const game = await Game.findOne({ roomId });
         if (!game || game.status !== 'active') return;
@@ -305,7 +352,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
         const player2Id = game.players[1];
         const opponentId = (currentUserId === player1Id) ? player2Id : player1Id;
         const opponentTargetCardId = game.targetPlayers.get(opponentId);
-      
+
 
         if (!opponentTargetCardId) return;
 
@@ -322,7 +369,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
             timestamp: new Date(),
             details: {
               guessedPlayerId: guessedPlayerId,
-              guessedPlayer : guessedPlayer,
+              guessedPlayer: guessedPlayer,
               answer: 'correct'
             }
           });
@@ -333,7 +380,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
             winnerId: currentUserId,
             isCorrectGuess: true,
             guessedPlayerId: guessedPlayerId,
-            guessedPlayer : guessedPlayer,
+            guessedPlayer: guessedPlayer,
             actualTargetId: opponentTargetCardId,
             lives: Object.fromEntries(game.remainingGuesses),
             history: game.history
@@ -353,7 +400,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
             timestamp: new Date(),
             details: {
               guessedPlayerId: guessedPlayerId,
-              guessedPlayer : guessedPlayer,
+              guessedPlayer: guessedPlayer,
               answer: 'incorrect'
             }
           });
@@ -410,7 +457,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
       setTimeout(async () => {
         try {
           const game = await Game.findOne({ roomId });
-          
+
           // If game doesn't exist or is already finished, do nothing
           if (!game || game.status === 'finished') return;
 
@@ -423,7 +470,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
           if (!isUserBack) {
             console.log(`User ${user?.userId} failed to reconnect. Forfeiting game.`);
-            
+
             // Figure out who the winner is (the person who DIDN'T disconnect)
             const disconnectedPlayerId = user?.userId;
             const winnerId = game.players.find(id => id !== disconnectedPlayerId);
@@ -431,7 +478,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
             // End the game
             game.status = 'finished';
             game.winner = winnerId;
-            
+
             game.history.push({
               action: 'forfeit',
               playerId: disconnectedPlayerId,
@@ -449,10 +496,10 @@ export const initializeSocket = (httpServer: HttpServer) => {
               history: game.history
             });
           } else {
-             // User reconnected in time! Tell the opponent.
-             io.to(roomId).emit('opponent_reconnected', {
-                message: 'Opponent has reconnected! The game continues.',
-             });
+            // User reconnected in time! Tell the opponent.
+            io.to(roomId).emit('opponent_reconnected', {
+              message: 'Opponent has reconnected! The game continues.',
+            });
           }
 
         } catch (error) {

@@ -22,6 +22,25 @@ export const joinRoom = (roomId: string) => {
   socket.emit('join_room', { roomId });
 };
 
+// Quiting Game
+
+export const quitGame = () => {
+  const socket = useSocketStore.getState().socket;
+  const roomId = useGameStore.getState().roomId;
+
+  if (!socket || !roomId) {
+    console.error('Missing socket or roomId');
+    return;
+  }
+
+  if (!socket.connected) {
+    console.error('Socket is not connected!');
+    return;
+  }
+
+  socket.emit('quit_game', { roomId });
+};
+
 /**
  * Box 1: Send an open-ended natural language question to the opponent
  */

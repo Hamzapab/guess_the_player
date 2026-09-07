@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-// Define the shape of a history item based on our backend
+
 export interface HistoryItem {
   action: 'question' | 'answer' | 'final_guess';
   playerId: string;
@@ -17,7 +17,7 @@ interface GameState {
   roomId: string | null;
   status: 'waiting' | 'active' | 'finished' | null;
   currentTurn: string | null;
-  myTargetCard: any | null; // We can type this strictly later based on Footballer model
+  myTargetCard: any | null; 
   history: HistoryItem[];
   lives: Record<string, number>; 
   winnerId: string | null;

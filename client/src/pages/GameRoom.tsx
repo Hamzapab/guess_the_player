@@ -11,6 +11,7 @@ import { TargetCard } from '../components/TargetCard';
 import { InterrogationChat } from '../components/TurnHeader';
 import { SniperGuess } from '../components/SniperGuess';
 import { WaitingLobby } from './LobbyWait';
+import { GameRoomHeader } from '../components/GameRoomHead';
 
 export const GameRoom: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -46,7 +47,9 @@ export const GameRoom: React.FC = () => {
   }
 
   return (
-    <div className="game-layout-container">
+    <>
+     <GameRoomHeader />
+     <div className="game-layout-container">
       {/* Top Bar: Turn info & Lives */}
       <TurnHeader />
 
@@ -68,5 +71,6 @@ export const GameRoom: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
