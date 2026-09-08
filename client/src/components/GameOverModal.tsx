@@ -87,7 +87,7 @@ export const GameOverModal = () => {
                 {t("gameOver.gameOver")}
               </h2>
               <p className="text-sm text-slate-400 max-w-xs mx-auto">
-                {t("gameOver.defeatMessage")}
+                {t("gameOver.lossMessage")}
               </p>
             </div>
           </div>

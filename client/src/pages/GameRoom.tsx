@@ -4,8 +4,6 @@ import { useSocketStore } from '../store/socketStore';
 import { useGameStore } from '../store/useGameStore';
 import { useGameEngine } from '../hooks/useGameEngine';
 import { joinRoom } from '../store/gameActions';
-
-import { TurnHeader } from '../components/TurnHeader';
 import { TargetCard } from '../components/TargetCard';
 import { InterrogationChat } from '../components/TurnHeader';
 import { SniperGuess } from '../components/SniperGuess';
@@ -25,9 +23,6 @@ export const GameRoom: React.FC = () => {
   const status = useGameStore((state) => state.status);
 
 
-  // 2. Lifecycle management: Connect on mount, disconnect on leave
-  // !!!!!  GameRoom no longer connects/disconnects — App.tsx owns that lifecycle.
-  // It just reacts to the socket already being connected.
 
   // 3. Once socket connects, automatically join the room ID from the URL
   useEffect(() => {
@@ -47,13 +42,13 @@ export const GameRoom: React.FC = () => {
   }
 
   return (
-    <>
+    <div className='bg-[#0C111A]'>
      <GameRoomHeader />
      <div className="game-layout-container">
       {/* Top Bar: Turn info & Lives */}
-      <TurnHeader />
 
-      <div className="main-game-grid">
+
+      <div className="main-game-grid flex flex-row">
         {/* Left/Static Column: Your Secret Identity */}
         <TargetCard />
 
@@ -71,6 +66,6 @@ export const GameRoom: React.FC = () => {
         </div>
       </div>
     </div>
-    </>
+    </div>
   );
 };

@@ -8,6 +8,7 @@ export interface IPlayer extends Document {
   position: 'Goalkeeper' | 'Defender' | 'Midfielder' | 'Forward';
   height: number;
   age: number;
+  shirtNum : number;
   imageUrl: string;
   isLegend: boolean;
 }

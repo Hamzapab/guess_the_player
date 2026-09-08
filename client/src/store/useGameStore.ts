@@ -12,12 +12,25 @@ export interface HistoryItem {
     guessedPlayer: string; 
   };
 }
+export interface ICardDetails {
+  _id: string;
+  name: string;
+  age: number;
+  height: number;
+  shirtNum : number;
+  nationality: string;
+  club: string;
+  league: string;
+  position: 'Goalkeeper' | 'Defender' | 'Midfielder' | 'Forward';
+  imageUrl: string;
+  isLegend: boolean;
+}
 
 interface GameState {
   roomId: string | null;
   status: 'waiting' | 'active' | 'finished' | null;
   currentTurn: string | null;
-  myTargetCard: any | null; 
+  myTargetCard: ICardDetails | null; 
   history: HistoryItem[];
   lives: Record<string, number>; 
   winnerId: string | null;
