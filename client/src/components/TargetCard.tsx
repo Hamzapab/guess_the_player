@@ -110,11 +110,11 @@ export const TargetCard: React.FC = () => {
 
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
-    <div>
+    <div >
       <div className="text-white/40 text-[10px] font-medium tracking-wide">
         {label}
       </div>
-      <div className="text-white text-sm font-bold mt-0.5">{value}</div>
+      <div className="text-white text-xs font-bold mt-1">{value}</div>
     </div>
   );
 }

@@ -1,8 +1,11 @@
 import { Server, Socket } from 'socket.io';
+import { randomUUID } from 'crypto';
 import { Server as HttpServer } from 'http';
 import { verifyToken } from '@clerk/backend';
 import Game from './models/Game.js';
 import Player from './models/Player.js';
+import User from './models/User.js';
+
 
 
 declare module 'socket.io' {
@@ -138,6 +141,14 @@ export const initializeSocket = (httpServer: HttpServer) => {
           // Decide who goes first (50/50 coin flip)
           game.currentTurn = Math.random() < 0.5 ? game.players[0] : game.players[1];
 
+          // resolve both players' public profile info from DB
+          const users = await User.find({
+            clerkId: { $in: [player1Id, player2Id] },
+          }).select('clerkId username imageUrl');
+          
+          game.playersInfo = new Map(
+            users.map(u => [u.clerkId, { username: u.username, imageUrl: u.imageUrl || 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original'  }])
+          );
           await game.save();
         } else {
           await game.save();
@@ -148,7 +159,8 @@ export const initializeSocket = (httpServer: HttpServer) => {
             roomId,
             currentTurn: game.currentTurn,
             status: game.status,
-            lives: Object.fromEntries(game.remainingGuesses)
+            lives: Object.fromEntries(game.remainingGuesses),
+            players: Object.fromEntries(game.playersInfo),
           });
         }
 
@@ -184,6 +196,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
         game.winner = opponentId;
 
         game.history.push({
+          id: randomUUID(),
           action: 'surrender',
           playerId: currentUserId,
           timestamp: new Date(),
@@ -282,6 +295,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
         // 2. Add the question to the game history
         const newHistoryItem = {
+          id: randomUUID(),
           action: 'question',
           playerId: currentUserId,
           timestamp: new Date(),
@@ -330,6 +344,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
         // 3. Record the answer
         game.history.push({
+          id: randomUUID(),
           action: 'answer',
           playerId: currentUserId,
           timestamp: new Date(),
@@ -388,6 +403,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
           game.winner = currentUserId;
 
           game.history.push({
+            id: randomUUID(),
             action: 'final_guess',
             playerId: currentUserId,
             timestamp: new Date(),
@@ -419,6 +435,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
           game.remainingGuesses.set(currentUserId, currentLives);
 
           game.history.push({
+            id: randomUUID(),
             action: 'final_guess',
             playerId: currentUserId,
             timestamp: new Date(),
@@ -504,6 +521,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
             game.winner = winnerId;
 
             game.history.push({
+              id: randomUUID(),
               action: 'forfeit',
               playerId: disconnectedPlayerId,
               timestamp: new Date(),

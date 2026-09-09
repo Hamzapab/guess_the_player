@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 
 export interface HistoryItem {
+  id: string;
   action: 'question' | 'answer' | 'final_guess' | "surrender";
   playerId: string;
   timestamp: Date;
@@ -31,6 +32,7 @@ interface GameState {
   status: 'waiting' | 'active' | 'finished' | null;
   currentTurn: string | null;
   myTargetCard: ICardDetails | null; 
+  players: Record<string, { username: string; imageUrl?: string }>
   history: HistoryItem[];
   lives: Record<string, number>; 
   winnerId: string | null;
@@ -46,6 +48,7 @@ export const useGameStore = create<GameState>((set) => ({
   status: null,
   currentTurn: null,
   myTargetCard: null,
+  players: {}, 
   history: [],
   lives: {},
   winnerId: null,

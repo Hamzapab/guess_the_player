@@ -32,6 +32,7 @@ router.post(
               clerkUser.username ||
               clerkUser.first_name ||
               "user",
+            imageUrl: clerkUser.image_url,
             stats: {},
           });
 
@@ -51,6 +52,7 @@ router.post(
               clerkUser.username ||
               clerkUser.first_name ||
               "user",
+            imageUrl: clerkUser.image_url,
           }
         );
 
