@@ -1,10 +1,9 @@
-import React from 'react';
 import { useGameStore } from '../store/useGameStore';
 import { useSocketStore } from '../store/socketStore';
 import { useUser } from '@clerk/clerk-react';
 import { User, Shield, Trophy} from "lucide-react";
 
-export const TargetCard: React.FC = () => {
+export const TargetCard  = () => {
   const myTargetCard = useGameStore((state) => state.myTargetCard);
   // Grab the local user's ID to check if it's their turn
   const { user } = useUser();
@@ -30,7 +29,7 @@ export const TargetCard: React.FC = () => {
   }
 
   return (
-    <div className="max-w-140 flex-1 flex flex-col items-center bg-gradient-to-br from-indigo-900 to-slate-900 border border-indigo-500/30 rounded-xl p-6 shadow-xl text-center relative overflow-hidden">
+    <div className="max-w-110 flex-1 flex flex-col items-center bg-gradient-to-br from-indigo-900 to-slate-900 border border-indigo-500/30 rounded-xl p-3 pt-5 px-2 shadow-xl text-center relative overflow-hidden">
       <div className="w-full flex items-center justify-between  mb-10">
         <div className="relative shrink-0 flex gap-4">
           <div className="w-9 h-9  relative rounded-full flex items-center justify-center text-sm font-semibold text-white ">

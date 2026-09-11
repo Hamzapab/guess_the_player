@@ -7,7 +7,7 @@ import { CheckCircle, XCircle } from 'lucide-react';
 
 
 // ==========================================
-// INTERROGATION CHAT COMPONENT (BOX 1)
+// INTERROGATION CHAT COMPONENT 
 // ==========================================
 export const InterrogationChat: React.FC = () => {
   const [questionText, setQuestionText] = useState('');
@@ -108,7 +108,7 @@ export const InterrogationChat: React.FC = () => {
       </div>
 
       {/* Interaction Zone */}
-      <div className="p-4 bg-gray-800 border-t border-gray-700">
+      <div className="px-4 py-2 bg-gray-800 border-t border-gray-700">
 
         {/* Scenario A: My turn & no response yet */}
         {isMyTurn && !isPending && (
@@ -169,3 +169,5 @@ export const InterrogationChat: React.FC = () => {
     </div>
   );
 };
+
+

@@ -10,6 +10,7 @@ import { SniperGuess } from '../components/SniperGuess';
 import { WaitingLobby } from './LobbyWait';
 import { GameRoomHeader } from '../components/GameRoomHead';
 import { GameOverModal } from '../components/GameOverModal';
+import { OpponentCard } from '../components/OpponentCard';
 
 export const GameRoom: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -53,7 +54,7 @@ export const GameRoom: React.FC = () => {
         <TargetCard />
 
         {/* Dynamic Action Center */}
-        <div className="action-center">
+        <div className="flex-1 action-center">
           {status === 'finished' ? (
             <GameOverModal />
           ) : (
@@ -64,6 +65,9 @@ export const GameRoom: React.FC = () => {
             </>
           )}
         </div>
+
+        {/* right column : OP Card */}
+        <OpponentCard />
       </div>
     </div>
     </div>

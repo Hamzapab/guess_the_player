@@ -20,14 +20,12 @@ export const useGameEngine = () => {
 
     // 2. Both players are in! The match begins.
     socket.on('game_start_signal', (data) => {
-       console.log('RAW data.players from socket:', data.players);
       setRoomState({
         status: data.status,
         currentTurn: data.currentTurn,
         isOpponentDisconnected: false,
         lives: data.lives, 
-        players: data.players, 
-        
+        players: data.players,         
       });
 
       // Ask the server for the secret card

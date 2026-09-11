@@ -93,10 +93,18 @@ export const initializeSocket = (httpServer: HttpServer) => {
         // 4. Join the Socket.io room (Safe for both new joins and page refreshes)
         socket.join(roomId);
 
+        // Get OP Id
+        const socketsInRoom = await io.in(roomId).fetchSockets();
+        
+        const opponentSocket = socketsInRoom.find(
+          (s) => (s as any).user?.userId !== currentUserId
+        );
+
         // Send current players list to the client who just joined
         socket.emit('room_joined', {
           roomId,
           players: game.players,
+          opponentOnline: !!opponentSocket,
           message: `Successfully joined room ${roomId}`
         });
 

@@ -80,17 +80,17 @@ export const SniperGuess: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-950 border border-red-900/30 rounded-xl p-5 mt-4">
+    <div className="bg-gray-950 border border-red-900/30 rounded-xl p-5 py-4">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-lg">🎯</span>
-        <h3 className="font-bold text-sm text-gray-300 tracking-wider">SNIPER FINAL GUESS (BOX 2)</h3>
+        <h3 className="font-bold text-sm text-gray-300 tracking-wider">SNIPER FINAL GUESS</h3>
       </div>
-      <p className="text-xs text-gray-400 mb-4">
+      <p className="text-xs text-gray-400 mb-2">
         Think you know who they are playing as? Search the master listing and lock it in.
       </p>
 
       {isMyTurn ? (
-        <form onSubmit={handleFireGuess} className="space-y-3" ref={dropdownRef}>
+        <form onSubmit={handleFireGuess} className="space-y-2" ref={dropdownRef}>
           <div className="relative">
             <input
               type="text"
