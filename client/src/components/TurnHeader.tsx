@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useGameStore } from '../store/useGameStore';
 import { useUser } from "@clerk/clerk-react";
 import { submitQuestion, submitAnswer } from '../store/gameActions';
+import { CheckCircle, XCircle } from 'lucide-react';
 
 
 
@@ -38,7 +39,7 @@ export const InterrogationChat: React.FC = () => {
     <div className="bg-gray-900 border border-gray-700 rounded-xl flex flex-col h-125 overflow-hidden">
 
       {/* HISTORY FEED */}
-      <div className="flex-1 p-4 overflow-y-auto flex flex-col gap-3">
+      <div className="flex-1 p-4 overflow-y-auto flex flex-col gap-3 scroll-y">
         {history.length === 0 ? (
           <div className="h-full flex items-center justify-center text-gray-500 italic">
             The interrogation begins now. Ask the first question!
@@ -49,39 +50,57 @@ export const InterrogationChat: React.FC = () => {
             const playerInfo = isMe
               ? { imageUrl: user?.imageUrl, name: user?.username ?? 'You' }
               : players[item.playerId];
-            console.log("player :" + playerInfo.imageUrl)
+
             return (
               <div key={item.id} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-                {/* Chat Bubble */}
-                <div className='flex gap-1.5'>
-                  {!isMe ? <span className='w-6 h-6 rounded-full overflow-hidden'><img src={"https://t4.ftcdn.net/jpg/07/03/86/11/360_F_703861114_7YxIPnoH8NfmbyEffOziaXy0EO1NpRHD.jpg"}></img></span> : <span></span>}
-                  <div className={`max-w-[80%] px-3 text-sm flex justify-center items-center rounded-2xl ${isMe ? 'bg-blue-600 text-white rounded-br-sm' : 'bg-gray-700 text-gray-200 rounded-bl-sm'}
-                   ${(!isMe && item.action === 'answer') && "hidden"}
-                `}>
-                    {item.action === 'question' && (
-                      <>
-                        {item.details.text}
-                      </>
-                    )}
+                {/* Row: avatar + bubble — reversed for "me" so avatar lands on the right */}
+                <div className={`flex gap-1.5 items-end ${isMe ? 'flex-row-reverse' : ''}`}>
+                  <span className="w-6 h-6 rounded-full overflow-hidden shrink-0">
+                    <img
+                      src={playerInfo?.imageUrl}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  </span>
+
+                  <div
+                    className={`max-w-[80%] px-3 py-2 text-sm rounded-2xl ${isMe
+                        ? 'bg-blue-600 text-white rounded-br-sm'
+                        : 'bg-gray-700 text-gray-200 rounded-bl-sm'
+                      } ${!isMe && item.action === 'answer' ? 'hidden' : ''}
+                        ${ isMe && item.action === 'answer' ? 'hidden' : ''}
+                      `}
+                  >
+                    {item.action === 'question' && item.details.text}
                     {item.action === 'final_guess' && (
                       <>
-                        <span className="font-bold text-yellow-300 block text-xs uppercase mb-1">Final Guess Attempt</span>
+                        <span className="font-bold text-yellow-300 block text-xs uppercase mb-1">
+                          Final Guess Attempt
+                        </span>
                         {item.details.guessedPlayer}
                       </>
                     )}
                   </div>
-                   {/* Answer Badge */}
-                  {item.details.answer !== 'pending' && (
-                  <span className={`text-xs font-bold mt-1 px-2 py-1 rounded-full ${item.details.answer === 'yes' ? 'bg-green-500/20 text-green-400' :
-                      item.details.answer === 'no' ? 'bg-red-500/20 text-red-400' : 'bg-gray-500/20 text-gray-400'
-                    }`}>
+                </div>
+
+                {/* Badge row  */}
+                {item.details.answer !== 'pending' && (
+                  <span
+                    className={`flex items-center gap-1 text-xs font-bold mt-1 px-2 py-1 rounded-full ${item.details.answer === 'yes'
+                        ? 'text-green-400'
+                        : item.details.answer === 'no'
+                          ? 'text-red-400'
+                          : 'text-gray-400'
+                      }`}
+                  >
+                    {item.details.answer === 'yes' ? (
+                      <CheckCircle className="w-3.5 h-3.5" />
+                    ) : item.details.answer === 'no' ? (
+                      <XCircle className="w-3.5 h-3.5" />
+                    ) : null}
                     Answer: {item.details?.answer?.toUpperCase()}
                   </span>
                 )}
-                </div>
-                
-               
-                
               </div>
             );
           })

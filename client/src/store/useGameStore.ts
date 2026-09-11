@@ -48,7 +48,7 @@ export const useGameStore = create<GameState>((set) => ({
   status: null,
   currentTurn: null,
   myTargetCard: null,
-  players: {}, 
+  players: {} as Record<string, { username: string; imageUrl?: string }>,
   history: [],
   lives: {},
   winnerId: null,

@@ -21,6 +21,13 @@
   color: #888;
 }
 
+/* Scroll bar */
+
+.scroll-y {
+  overflow-y: auto;
+  scrollbar-width: thin;               
+  scrollbar-color: #4b5563 #1f2937;      
+}
 
 /* Font */
 
