@@ -23,6 +23,54 @@ export const initializeSocket = (httpServer: HttpServer) => {
     },
   });
 
+   const roomTimers = new Map<string, NodeJS.Timeout>();
+
+    const clearRoomTimer = (roomId: string) => {
+      const existing = roomTimers.get(roomId);
+      if (existing) clearTimeout(existing);
+      roomTimers.delete(roomId);
+    };
+
+  const startTurnTimer = (roomId: string) => {
+    clearRoomTimer(roomId); // clear timing stack 
+
+    const timer = setTimeout(async () => {
+      try {
+        const game = await Game.findOne({ roomId });
+        if (!game || game.status !== 'active') return; // no active game -> exit
+
+        const timedOutPlayer = game.currentTurn;
+        const player1Id = game.players[0];
+        const player2Id = game.players[1];
+        const nextTurn = timedOutPlayer === player1Id ? player2Id : player1Id;
+
+        game.history.push({
+          id: randomUUID(),
+          action: 'question',
+          playerId: timedOutPlayer,
+          timestamp: new Date(),
+          details: { text: null, answer: 'timed_out' }
+        });
+
+        game.currentTurn = nextTurn;
+        await game.save();
+
+        io.to(roomId).emit('turn_resolved', {
+          history: game.history,
+          lives: Object.fromEntries(game.remainingGuesses),
+          newTurn: game.currentTurn,
+          systemMessage: 'Player took too long to ask. Turn passed to opponent.'
+        });
+
+        startTurnTimer(roomId); // OP turn — restart the clock
+      } catch (error) {
+        console.error('Error handling turn timeout:', error);
+      }
+    }, 40000);
+      
+    roomTimers.set(roomId, timer);
+  };
+
   // Middleware to handle Auth
   io.use(async (socket: Socket, next) => {
     const rawToken = socket.handshake.auth.token ?? socket.handshake.headers?.token;
@@ -122,8 +170,11 @@ export const initializeSocket = (httpServer: HttpServer) => {
           // Change Game Status
           game.status = "active"
 
-          // Fetch Players from DB. 
+          // Start timing 
+           startTurnTimer(roomId);
 
+          
+           // Fetch Players from DB. 
           const randomPlayersCards = await Player.aggregate([
             { $sample: { size: 10 } }
           ]);
@@ -212,6 +263,9 @@ export const initializeSocket = (httpServer: HttpServer) => {
         });
 
         await game.save();
+
+        // Clear timing
+        clearRoomTimer(roomId);
 
         // Notify both players
         io.to(roomId).emit('game_over', {
@@ -322,6 +376,9 @@ export const initializeSocket = (httpServer: HttpServer) => {
           message: 'Opponent asked a question. Waiting for answer...'
         });
 
+        // clear timing
+        clearRoomTimer(roomId);
+
       } catch (error) {
         console.error('Error submitting question:', error);
         socket.emit('error', { message: 'Failed to submit question.' });
@@ -329,7 +386,6 @@ export const initializeSocket = (httpServer: HttpServer) => {
     });
 
     // Response
-
     socket.on('submit_answer', async ({ roomId, answer }: { roomId: string, answer: 'yes' | 'no' }) => {
       try {
         const game = await Game.findOne({ roomId });
@@ -368,6 +424,9 @@ export const initializeSocket = (httpServer: HttpServer) => {
         game.currentTurn = (game.currentTurn === player1Id) ? player2Id : player1Id;
 
         await game.save();
+
+        // Start ask timing 
+        startTurnTimer(roomId);
 
         // 5. Broadcast the result and the new turn to both players
         io.to(roomId).emit('turn_resolved', {
@@ -434,6 +493,9 @@ export const initializeSocket = (httpServer: HttpServer) => {
             history: game.history
           });
 
+          // clear timinig
+          clearRoomTimer(roomId);
+
         } else {
           // WRONG GUESS! Lose a life.
           // Get current lives (default to 3 if not set)
@@ -469,6 +531,9 @@ export const initializeSocket = (httpServer: HttpServer) => {
               reason: 'out_of_lives',
               history: game.history
             });
+
+            // Clear timing 
+            clearRoomTimer(roomId);
 
           } else {
             // STILL ALIVE! Switch turn and continue.
@@ -556,6 +621,9 @@ export const initializeSocket = (httpServer: HttpServer) => {
           console.error('Error handling disconnect timeout:', error);
         }
       }, 30000); // 30 seconds
+
+      // Clear timing
+      clearRoomTimer(roomId);
     });
   });
 

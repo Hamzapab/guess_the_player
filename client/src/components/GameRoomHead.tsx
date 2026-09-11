@@ -8,14 +8,16 @@ import { quitGame } from '../store/gameActions';
 
 
 
+
 export const GameRoomHeader = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const socket = useSocketStore((state) => state.socket);
 
+
   const handleCancel = () => {
     if (socket) {
-       quitGame();
+      quitGame();
       navigate("/")
     }
   };
@@ -25,14 +27,14 @@ export const GameRoomHeader = () => {
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-blue-600/20">
-             <img src={logo} alt="logo" />
+            <img src={logo} alt="logo" />
           </div>
 
           <div>
             <h1 className="text-base font-bold text-white leading-tight tracking-wide">
               {t("header.title")}
             </h1>
-    
+
           </div>
         </div>
 

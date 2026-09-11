@@ -1,11 +1,37 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSocketStore } from '../store/socketStore';
 import { useGameStore } from '../store/useGameStore';
+
+const TURN_DURATION = 40;
 
 export const useGameEngine = () => {
   // 1. Grab the active socket and the state updater function
   const socket = useSocketStore((state) => state.socket);
   const setRoomState = useGameStore((state) => state.setRoomState);
+
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startCountdown = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+
+    setRoomState({ secondsLeft: TURN_DURATION, isAskingPhase: true });
+
+    intervalRef.current = setInterval(() => {
+      const current = useGameStore.getState().secondsLeft;
+      if (current <= 0) return;
+      setRoomState({ secondsLeft: current - 1 });
+    }, 1000);
+  };
+
+  
+  const stopCountdown = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = null;
+    setRoomState({ isAskingPhase: false });
+  }; 
+  
+
+
 
   useEffect(() => {
     // Not connected -> close
@@ -20,6 +46,7 @@ export const useGameEngine = () => {
 
     // 2. Both players are in! The match begins.
     socket.on('game_start_signal', (data) => {
+       // Start timer
       setRoomState({
         status: data.status,
         currentTurn: data.currentTurn,
@@ -27,6 +54,8 @@ export const useGameEngine = () => {
         lives: data.lives, 
         players: data.players,         
       });
+
+       startCountdown();  // game begins in "ask" phase
 
       // Ask the server for the secret card
       socket.emit('get_my_target_card', { roomId: data.roomId });
@@ -40,6 +69,7 @@ export const useGameEngine = () => {
 
     // 4. Question
     socket.on('question_received', (data) => {
+      stopCountdown(); 
       useGameStore.setState((state) => ({
         history: [...state.history, data.question],
       }));
@@ -52,9 +82,7 @@ export const useGameEngine = () => {
         currentTurn: data.newTurn,
         lives: data.lives, 
       });
-      
-      // Tip: If data.systemMessage exists (e.g., "Lost a life!"), 
-      // trigger UI Toast notification right here.
+      startCountdown();
     });
 
 
@@ -62,6 +90,7 @@ export const useGameEngine = () => {
 
     // 6. The Grand Finale! Someone won or ran out of lives.
     socket.on('game_over', (data) => {
+      stopCountdown();
       setRoomState({
         status: 'finished',
         winnerId: data.winnerId,
@@ -114,3 +143,4 @@ export const useGameEngine = () => {
     };
   }, [socket, setRoomState]); 
 };
+

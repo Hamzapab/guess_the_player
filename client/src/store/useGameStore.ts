@@ -37,6 +37,8 @@ interface GameState {
   lives: Record<string, number>; 
   winnerId: string | null;
   isOpponentDisconnected: boolean,
+  secondsLeft: number;
+  isAskingPhase: boolean;
   
   // Actions to update the state
   setRoomState: (data: Partial<GameState>) => void;
@@ -53,6 +55,8 @@ export const useGameStore = create<GameState>((set) => ({
   lives: {},
   winnerId: null,
   isOpponentDisconnected: false,
+  secondsLeft: 40,
+  isAskingPhase: true,
 
   setRoomState: (data) => set((state) => ({ ...state, ...data })),
   
@@ -64,5 +68,7 @@ export const useGameStore = create<GameState>((set) => ({
     history: [],
     lives: {},
     winnerId: null,
+    secondsLeft: 40,
+    isAskingPhase: false,
   }),
 }));
