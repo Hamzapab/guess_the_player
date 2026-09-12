@@ -106,6 +106,15 @@ export const useGameEngine = () => {
       }
     });
 
+    // 6.5 Search timed out
+     socket.on('room_timeout', () => {
+      setRoomState({gameCancled:true});
+      // Special alert for abandonment
+      // alert("No Player Join"); 
+
+    });
+
+
     // 7. Security or Logic Errors
     socket.on('error', (data) => {
       console.error('Game Error:', data.message);
@@ -126,7 +135,6 @@ export const useGameEngine = () => {
       // Clear the warning from the UI
       setRoomState({ isOpponentDisconnected: false });
     });
-
     // ---  THE CLEANUP ---
     // If the user navigates away from the game page, React unmounts this hook.
     //  turn off the listeners so they don't double-fire if the user comes back.

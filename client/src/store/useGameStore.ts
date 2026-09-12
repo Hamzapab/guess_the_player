@@ -31,6 +31,7 @@ interface GameState {
   roomId: string | null;
   status: 'waiting' | 'active' | 'finished' | null;
   currentTurn: string | null;
+  gameCancled: boolean;
   myTargetCard: ICardDetails | null; 
   players: Record<string, { username: string; imageUrl?: string }>
   history: HistoryItem[];
@@ -49,6 +50,7 @@ export const useGameStore = create<GameState>((set) => ({
   roomId: null,
   status: null,
   currentTurn: null,
+  gameCancled: false,
   myTargetCard: null,
   players: {} as Record<string, { username: string; imageUrl?: string }>,
   history: [],

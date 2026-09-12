@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser, useAuth } from "@clerk/clerk-react";
 import { createGame } from '../api/gameApi';
@@ -6,6 +6,7 @@ import { Header } from "../components/Header";
 import { CirclePlus , DoorOpen } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { Footer } from '../components/Footer';
+import { useGameStore } from '../store/useGameStore';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -19,6 +20,17 @@ const Home = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState('');
   const { getToken } = useAuth();
+   const setRoomState = useGameStore((state) => state.setRoomState);
+
+   useEffect(() => {
+    setRoomState({
+      roomId: null,
+      status: null,
+      myTargetCard: null,
+      winnerId: null,
+      gameCancled: false,
+    });
+  }, []);
 
   const handleCreateGame = async () => {
 

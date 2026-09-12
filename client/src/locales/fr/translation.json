@@ -60,5 +60,10 @@
     "gameOver": "Fin du jeu",
     "lossMessage": "Bonne chance la prochaine fois ! Ton adversaire a deviné correctement ton joueur secret en premier.",
     "returnHome": "Retour à l'accueil"
+  },
+  "gameCancelled": {
+    "badge": "Match annulé",
+    "title": "Aucun adversaire trouvé",
+    "message": "Le match a été annulé car personne n'a rejoint la salle. Veuillez réessayer plus tard."
   }
 }

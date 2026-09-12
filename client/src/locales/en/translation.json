@@ -60,5 +60,10 @@
     "gameOver": "Game Over",
     "lossMessage": "Better luck next time! Your opponent correctly guessed your secret player first.",
     "returnHome": "Return to Home"
+  },
+   "gameCancelled": {
+    "badge": "Match Cancelled",
+    "title": "No Opponent Found",
+    "message": "The match was cancelled because no one joined the room. Please try again later."
   }
 }
