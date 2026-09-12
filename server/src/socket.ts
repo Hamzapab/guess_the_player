@@ -46,7 +46,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
         game.history.push({
           id: randomUUID(),
-          action: 'question',
+          action: 'question_timed',
           playerId: timedOutPlayer,
           timestamp: new Date(),
           details: { text: null, answer: 'timed_out' }

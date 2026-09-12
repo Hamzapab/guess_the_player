@@ -53,7 +53,7 @@ export const InterrogationChat: React.FC = () => {
 
             return (
               <div key={item.id} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-                {/* Row: avatar + bubble — reversed for "me" so avatar lands on the right */}
+
                 <div className={`flex gap-1.5 items-end ${isMe ? 'flex-row-reverse' : ''}`}>
                   <span className="w-6 h-6 rounded-full overflow-hidden shrink-0">
                     <img
@@ -64,14 +64,23 @@ export const InterrogationChat: React.FC = () => {
                   </span>
 
                   <div
-                    className={`max-w-[80%] px-3 py-2 text-sm rounded-2xl ${isMe
-                        ? 'bg-blue-600 text-white rounded-br-sm'
-                        : 'bg-gray-700 text-gray-200 rounded-bl-sm'
-                      } ${!isMe && item.action === 'answer' ? 'hidden' : ''}
-                        ${ isMe && item.action === 'answer' ? 'hidden' : ''}
+                    className={`max-w-[80%] px-3 py-2 text-sm rounded-2xl
+                      ${item.action === 'question_timed'
+                        ? isMe
+                          ? 'bg-amber-50 text-amber-800 border border-amber-400 rounded-br-sm'   // Player timed out
+                          : 'bg-green-50 text-green-800 border border-green-400 rounded-bl-sm'   // Opponent's turn
+                        : isMe
+                          ? 'bg-blue-600 text-white rounded-br-sm'
+                          : 'bg-gray-700 text-gray-200 rounded-bl-sm'
+                      }
+                      ${!isMe && item.action === 'answer' ? 'hidden' : ''}
+                      ${isMe && item.action === 'answer' ? 'hidden' : ''}
                       `}
                   >
                     {item.action === 'question' && item.details.text}
+                    {item.action === 'question_timed' && (
+                      "Turn passed (timeout) "
+                    )}
                     {item.action === 'final_guess' && (
                       <>
                         <span className="font-bold text-yellow-300 block text-xs uppercase mb-1">
@@ -84,13 +93,13 @@ export const InterrogationChat: React.FC = () => {
                 </div>
 
                 {/* Badge row  */}
-                {item.details.answer !== 'pending' && (
+                {(item.details.answer !== 'pending' && item.action !== "question_timed") && (
                   <span
                     className={`flex items-center gap-1 text-xs font-bold mt-1 px-2 py-1 rounded-full ${item.details.answer === 'yes'
-                        ? 'text-green-400'
-                        : item.details.answer === 'no'
-                          ? 'text-red-400'
-                          : 'text-gray-400'
+                      ? 'text-green-400'
+                      : item.details.answer === 'no'
+                        ? 'text-red-400'
+                        : 'text-gray-400'
                       }`}
                   >
                     {item.details.answer === 'yes' ? (

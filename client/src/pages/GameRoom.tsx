@@ -5,7 +5,7 @@ import { useGameStore } from '../store/useGameStore';
 import { useGameEngine } from '../hooks/useGameEngine';
 import { joinRoom } from '../store/gameActions';
 import { TargetCard } from '../components/TargetCard';
-import { InterrogationChat } from '../components/TurnHeader';
+import { InterrogationChat } from '../components/InterrogationChat'
 import { SniperGuess } from '../components/SniperGuess';
 import { WaitingLobby } from './LobbyWait';
 import { GameRoomHeader } from '../components/GameRoomHead';
