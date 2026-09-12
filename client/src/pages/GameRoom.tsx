@@ -11,6 +11,7 @@ import { WaitingLobby } from './LobbyWait';
 import { GameRoomHeader } from '../components/GameRoomHead';
 import { GameOverModal } from '../components/GameOverModal';
 import { OpponentCard } from '../components/OpponentCard';
+import { MobileCard } from '../components/MobileCard';
 
 export const GameRoom: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -49,9 +50,10 @@ export const GameRoom: React.FC = () => {
       {/* Top Bar: Turn info & Lives */}
 
 
-      <div className="main-game-grid flex flex-row">
+      <div className="main-game-grid flex flex-col md:flex-row ">
         {/* Left/Static Column: Your Secret Identity */}
         <TargetCard />
+        <MobileCard />
 
         {/* Dynamic Action Center */}
         <div className="flex-1 action-center">
