@@ -13,9 +13,9 @@ export const HowToPlay = () => {
   const { t } = useTranslation();
 
   return (
-    <>
+    <div className='min-h-screen bg-slate-950 text-slate-300'>
     <Header />
-    <div className="min-h-screen bg-slate-950 text-slate-300 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-12">
         
         <div className="text-center space-y-4">
@@ -108,6 +108,6 @@ export const HowToPlay = () => {
 
       </div>
     </div>
-    </>
+    </div>
   );
 };

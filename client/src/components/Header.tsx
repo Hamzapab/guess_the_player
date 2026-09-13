@@ -91,11 +91,11 @@ export const Header = () => {
    const { isSignedIn } = useUser();
 
   return (
-    <div className=" bg-[#101622]  text-white border-b border-slate-800 shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.5)]">
+    <div className=" bg-[#020617]/40 border-b border-[#1E293B]/80 text-white  shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.5)]">
       <div className="container flex justify-between mx-auto py-2">
         <div className="flex  items-center gap-2">
           <img src={logo} alt="logo" />
-          <h1>{t("header.title")}</h1>
+          <h1 className="hidden md:block">{t("header.title")}</h1>
         </div>
         <div className="flex  items-center gap-4 text-xs ">
           <LanguageDropdown/>

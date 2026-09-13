@@ -4,7 +4,7 @@ import Game from '../models/Game.js';
 
 const roomWaitTimers = new Map<string, NodeJS.Timeout>();
 
-const ROOM_JOIN_TIMEOUT_MS = 4000;
+const ROOM_JOIN_TIMEOUT_MS = 60000;
 
 export  function clearRoomWaitTimer(roomId: string) {
   const existing = roomWaitTimers.get(roomId);
