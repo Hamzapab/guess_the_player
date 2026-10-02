@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect , useState } from 'react';
 import { useParams } from 'react-router-dom'; 
 import { useSocketStore } from '../store/socketStore';
 import { useGameStore } from '../store/useGameStore';
@@ -12,9 +12,19 @@ import { GameRoomHeader } from '../components/GameRoomHead';
 import { GameOverModal } from '../components/GameOverModal';
 import { OpponentCard } from '../components/OpponentCard';
 import { MobileCard } from '../components/MobileCard';
+import { useBlockBackNavigation } from '../hooks/useBlockBackNavigation';
+import ConfirmQuitModal from "../components/ConfirmQuitModal";
+import { useNavigate } from 'react-router-dom';
+import { quitGame } from '../store/gameActions';
+
+
 
 export const GameRoom: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
+  const [showQuitConfirm, setShowQuitConfirm] = useState(false);
+  const navigate = useNavigate();
+
+  useBlockBackNavigation(() => setShowQuitConfirm(true));
   
   
   // 1. Initialize the centralized engine listeners
@@ -43,8 +53,20 @@ export const GameRoom: React.FC = () => {
     return <WaitingLobby />;
   }
 
+  // quit handling
+  const handleConfirmQuit = () => {
+    quitGame();
+    navigate("/")
+  };
+
   return (
     <div className='bg-[#0C111A]'>
+    {showQuitConfirm && (
+        <ConfirmQuitModal
+          onConfirm={handleConfirmQuit}
+          onCancel={() => setShowQuitConfirm(false)}
+        />
+      )}
      <GameRoomHeader />
      <div className="game-layout-container">
       {/* Top Bar: Turn info & Lives */}

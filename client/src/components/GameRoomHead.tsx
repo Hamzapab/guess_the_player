@@ -1,26 +1,30 @@
+import { useState } from 'react';  
 import { LogOut } from 'lucide-react';
-import logo from "../assets/logo.png";
+import logo from "../assets/logo.png";    
 import { useTranslation } from 'react-i18next';
 import { useSocketStore } from '../store/socketStore';
 import { useNavigate } from 'react-router-dom';
 import { quitGame } from '../store/gameActions';
-
-
-
+import ConfirmQuitModal from "../components/ConfirmQuitModal";
 
 
 export const GameRoomHeader = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const socket = useSocketStore((state) => state.socket);
+  const [ leaveState , setLeaveState ] =  useState(false);
 
 
-  const handleCancel = () => {
+  const handleConfirmQuit = () => {
     if (socket) {
       quitGame();
       navigate("/")
     }
   };
+
+  const handleCancel = () => {
+    setLeaveState(true)
+  }
 
   return (
     <header className="w-full bg-[#080d1a] border-b border-slate-800/80 px-6 py-3 flex items-center justify-between text-white select-none">
@@ -49,6 +53,12 @@ export const GameRoomHeader = () => {
         <LogOut size={18} className="text-slate-400 group-hover:text-white transition-colors" />
         <span>Quit Game</span>
       </button>
+       {leaveState && (
+        <ConfirmQuitModal
+          onConfirm={handleConfirmQuit}
+          onCancel={() => setLeaveState(false)}
+        />
+      )}    
     </header>
   );
 };
