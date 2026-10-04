@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useUser, useAuth } from "@clerk/clerk-react";
 import { createGame } from '../api/gameApi';
 import { Header } from "../components/Header";
-import { CirclePlus , DoorOpen } from "lucide-react";
+import { CirclePlus, DoorOpen } from "lucide-react";
+import { Zap, Users, Search, Loader2 } from "lucide-react"
 import { useTranslation } from 'react-i18next';
 import { Footer } from '../components/Footer';
 import { useGameStore } from '../store/useGameStore';
@@ -12,7 +13,7 @@ import { useGameStore } from '../store/useGameStore';
 const Home = () => {
   const navigate = useNavigate();
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const { user } = useUser();
 
@@ -21,9 +22,9 @@ const Home = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState('');
   const { getToken } = useAuth();
-   const setRoomState = useGameStore((state) => state.setRoomState);
+  const setRoomState = useGameStore((state) => state.setRoomState);
 
-   useEffect(() => {
+  useEffect(() => {
     setRoomState({
       roomId: null,
       status: null,
@@ -65,18 +66,18 @@ const Home = () => {
   return (
     <div id='home' className='min-h-screen flex flex-col'>
       <Header />
-      <div className="min-h-screen flex-1 flex items-center justify-center p-4">       
+      <div className="min-h-screen flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-5xl">
           {/* Header Section */}
           <div className="text-center mb-12">
             <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-4 tracking-tight drop-shadow-lg">
-               {t("header.title")}
+              {t("header.title")}
             </h1>
             <p className="text-slate-400 text-lg md:text-xl mb-2">
               {t("home.challenge")}
             </p>
             <p className="text-slate-500 font-medium">
-               {t("home.welcome")}, <span className="text-blue-400">{username}</span>
+              {t("home.welcome")}, <span className="text-blue-400">{username}</span>
             </p>
           </div>
 
@@ -92,7 +93,7 @@ const Home = () => {
             {/* Create Match Card */}
             <div className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-300 backdrop-blur-sm shadow-xl hover:shadow-2xl group">
               <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <CirclePlus  className="text-blue-500" size={24} />
+                <CirclePlus className="text-blue-500" size={24} />
                 {t("home.createMatch")}
               </h2>
 
@@ -120,7 +121,7 @@ const Home = () => {
                   disabled={isCreating}
                   className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-blue-500/25 transform active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isCreating ? t("home.creatingArena") :  t("home.createMatch")}
+                  {isCreating ? t("home.creatingArena") : t("home.createMatch")}
                 </button>
               </div>
             </div>
@@ -128,8 +129,8 @@ const Home = () => {
             {/* Join Match Card */}
             <div className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-300 backdrop-blur-sm shadow-xl hover:shadow-2xl group">
               <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                 <DoorOpen  className="text-green-500" size={24} />
-               {t("home.joinMatch")}
+                <DoorOpen className="text-green-500" size={24} />
+                {t("home.joinMatch")}
               </h2>
 
               <div className="space-y-6">
@@ -155,6 +156,58 @@ const Home = () => {
               </div>
             </div>
 
+            {/* quick Match */}
+
+            {/* Expects in scope: t, onlinePlayers (number), isSearching (boolean), handleFindMatch () => void */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-300 backdrop-blur-sm shadow-xl hover:shadow-2xl group">
+              {/* Header */}
+              <div className="flex items-center justify-between gap-3 mb-6">
+                <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+                  <span className="flex items-center justify-center w-11 h-11 rounded-full bg-cyan-500/10 border border-cyan-400/30">
+                    <Zap className="text-cyan-400" size={22} />
+                  </span>
+                  {t("home.quickMatch")}
+                </h2>
+
+                <span className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-medium">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                  </span>
+                  {t("home.live")}
+                </span>
+              </div>
+
+              <div className="space-y-6">
+                <p className="text-sm font-medium text-slate-400 uppercase tracking-wider">
+                  {t("home.automatedMatchmaking")}
+                </p>
+
+                {/* Info box */}
+                <div className="bg-slate-900/50 border border-slate-700 rounded-xl p-5">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="flex items-center gap-2 text-slate-200">
+                      <Users className="text-cyan-400" size={18} />
+                      {t("home.playersOnline")}
+                    </span>
+                    <span className="text-cyan-400 font-mono font-bold text-sm">~5s {t("home.wait")}</span>
+                  </div>
+                  <p className="text-slate-400 text-sm leading-relaxed">
+                    {t("home.quickMatchDescription")}
+                  </p>
+                </div>
+
+                {/* CTA */}
+                <button
+                  // onClick={}
+                  // disabled={}
+                  className="w-full py-4 flex items-center justify-center gap-3 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 hover:brightness-110 text-white rounded-xl font-bold text-lg shadow-lg shadow-blue-500/20 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {/* <Loader2 className="animate-spin" size={20} /> : <Search size={20} /> */}
+                  {t("home.findMatch")}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

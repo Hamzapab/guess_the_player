@@ -25,7 +25,14 @@
     "createMatch": "Create Match",
     "joinMatch": "Join Match",
     "enterRoomCode": "Enter Room Code",
-    "joinArena": "Join Arena"
+    "joinArena": "Join Arena",
+    "quickMatch": "Quick Match",
+    "live": "Live",
+    "automatedMatchmaking": "AUTOMATED MATCHMAKING",
+    "playersOnline": "Players Online",
+    "wait": "wait",
+    "quickMatchDescription": "Join an existing open room and battle players globally with zero setup required.",
+    "findMatch": "Find Match"
   },
   "howToPlay": {
     "title": "How to Play",

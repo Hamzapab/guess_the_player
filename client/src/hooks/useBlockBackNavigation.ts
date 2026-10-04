@@ -3,6 +3,8 @@ import { useEffect, useRef } from "react";
 export const useBlockBackNavigation = (onBackAttempt: () => void) => {
   const callbackRef = useRef(onBackAttempt);
 
+  
+
   useEffect(() => {
     callbackRef.current = onBackAttempt;
   }, [onBackAttempt]);

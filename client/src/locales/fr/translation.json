@@ -25,7 +25,14 @@
     "createMatch": "Créer un match",
     "joinMatch": "Rejoindre un match",
     "enterRoomCode": "Entrer le code de la salle",
-    "joinArena": "Rejoindre l'arène"
+    "joinArena": "Rejoindre l'arène",
+    "quickMatch": "Partie Rapide",
+    "live": "En Direct",
+    "automatedMatchmaking": "APPAIRAGE AUTOMATIQUE",
+    "playersOnline": "Joueurs en Ligne",
+    "wait": "~5s d'attente",
+    "quickMatchDescription": "Rejoignez une salle ouverte existante et affrontez des joueurs du monde entier sans aucune configuration.",
+    "findMatch": "Trouver une Partie"
   },
   "howToPlay": {
     "title": "Comment jouer",

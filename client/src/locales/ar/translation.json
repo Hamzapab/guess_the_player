@@ -25,7 +25,14 @@
     "createMatch": "إنشاء مباراة",
     "joinMatch": "انضم إلى مباراة",
     "enterRoomCode": "أدخل رمز الغرفة",
-    "joinArena": "انضم إلى الساحة"
+    "joinArena": "انضم إلى الساحة",
+     "quickMatch": "مباراة سريعة",
+    "live": "مباشر",
+    "automatedMatchmaking": "مطابقة تلقائية",
+    "playersOnline": "لاعب متصل",
+    "wait": "انتظار ~5 ثوانٍ",
+    "quickMatchDescription": "انضم إلى غرفة مفتوحة موجودة وتنافس مع لاعبين من جميع أنحاء العالم دون أي إعداد.",
+    "findMatch": "ابحث عن مباراة"
   },
   "howToPlay": {
     "title": "كيفية اللعب",
