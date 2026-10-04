@@ -5,6 +5,8 @@ import Game from '../models/Game.js';
 export const registerConnectionHandlers = (
   io: Server,
   socket: Socket,
+  currentUserId: string,
+  activeUsers: Map<string, number>,
   clearRoomTimer: (roomId: string) => void
 ) => {
   const user = socket.data.user;
@@ -74,6 +76,19 @@ export const registerConnectionHandlers = (
         console.error('Error handling disconnect timeout:', error);
       }
     }, 30000); // 30 seconds
+
+    // Remove user from active tracking safely
+    if (currentUserId) {
+      const currentSessions = activeUsers.get(currentUserId) || 0;
+      if (currentSessions <= 1) {
+        activeUsers.delete(currentUserId); // Last tab closed
+      } else {
+        activeUsers.set(currentUserId, currentSessions - 1); // Just closed one of multiple tabs
+      }
+      
+      // Broadcast the updated count
+      io.emit('online_count_update', { count: activeUsers.size });
+    }
 
     // Clear timing
     clearRoomTimer(roomId);

@@ -26,9 +26,22 @@ export const initializeSocket = (httpServer: HttpServer) => {
   // Middleware to handle Auth
   registerAuthMiddleware(io);
 
+
+  // Actives Users
+  const activeUsers = new Map<string, number>();
+
   io.on('connection', (socket: Socket) => {
     const user = socket.data.user;
-    console.log(`User connected: ${user.userId}`);
+    const currentUserId = user?.userId;
+    console.log(`User connected: ${currentUserId}`);
+
+    if (currentUserId) {
+      const currentSessions = activeUsers.get(currentUserId) || 0;
+      activeUsers.set(currentUserId, currentSessions + 1);
+      
+      // Broadcast the new unique user count to everyone
+      io.emit('online_count_update', { count: activeUsers.size });
+    }
 
     socket.onAny((eventName, ...args) => {
       console.log(`[DEBUG] Event received: ${eventName}`, args);
@@ -36,7 +49,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
     registerRoomHandlers(io, socket, startTurnTimer);
     registerGameHandlers(io, socket, startTurnTimer, clearRoomTimer);
-    registerConnectionHandlers(io, socket, clearRoomTimer);
+    registerConnectionHandlers(io, socket, currentUserId, activeUsers,clearRoomTimer);
   });
 
   return io;

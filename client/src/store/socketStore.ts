@@ -4,6 +4,9 @@ import { io, Socket } from 'socket.io-client';
 interface SocketState {
   socket: Socket | null;
   isConnected: boolean;
+  onlineCount: number;
+  setSocket: (socket: Socket | null) => void;
+  setOnlineCount: (count: number) => void;
   connect: (token: string) => void;   // accept token from outside
   disconnect: () => void;
 }
@@ -11,6 +14,9 @@ interface SocketState {
 export const useSocketStore = create<SocketState>((set, get) => ({
   socket: null,
   isConnected: false,
+  onlineCount: 0, 
+  setSocket: (socket) => set({ socket }),
+  setOnlineCount: (count) => set({ onlineCount: count }),
 
   connect: (token: string) => {
     const { socket: existingSocket, isConnected } = get();
