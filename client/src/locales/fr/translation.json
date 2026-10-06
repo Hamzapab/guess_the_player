@@ -32,7 +32,10 @@
     "playersOnline": "Joueurs en Ligne",
     "wait": "~5s d'attente",
     "quickMatchDescription": "Rejoignez une salle ouverte existante et affrontez des joueurs du monde entier sans aucune configuration.",
-    "findMatch": "Trouver une Partie"
+    "findMatch": "Trouver une Partie",
+    "searching": "RECHERCHE D'UNE PARTIE OUVERTE...",
+    "searchingDescription": "Recherche d'un adversaire disponible proche de votre niveau.",
+    "cancel": "Annuler la recherche"
   },
   "howToPlay": {
     "title": "Comment jouer",

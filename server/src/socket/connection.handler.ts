@@ -7,6 +7,7 @@ export const registerConnectionHandlers = (
   socket: Socket,
   currentUserId: string,
   activeUsers: Map<string, number>,
+  matchmakingQueue : { socket: Socket; userId: string }[],
   clearRoomTimer: (roomId: string) => void
 ) => {
   const user = socket.data.user;
@@ -14,6 +15,9 @@ export const registerConnectionHandlers = (
   socket.on('disconnect', async () => {
     console.log(`User ${user?.userId} disconnected`);
     const roomId = socket.data.roomId;
+
+    //  user disconnect  -> remove it from queue
+    matchmakingQueue = matchmakingQueue.filter(p => p.userId !== user?.userId);
 
     if (!roomId) return; // User wasn't in a room
 

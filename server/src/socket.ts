@@ -1,10 +1,13 @@
 import { Server, Socket } from 'socket.io';
+import crypto from 'crypto';
 import { Server as HttpServer } from 'http';
-import { createTurnTimer } from './socket/TurnTimer.js';
+import { createTurnTimer } from './socket/turnTimer.js';
 import { registerAuthMiddleware } from './socket/auth.middleware.js';
-import { registerRoomHandlers } from './socket/Room.handler.js';
-import { registerGameHandlers } from './socket/Game.handler.js';
-import { registerConnectionHandlers } from './socket/Connection.handler.js';
+import { registerRoomHandlers } from './socket/room.handler.js';
+import { registerGameHandlers } from './socket/game.handler.js';
+import { registerConnectionHandlers } from './socket/connection.handler.js';
+import { attemptMatchmaking } from './helper/matchMaking.js';
+import { matchMakingHandler } from './socket/matchmaking.handler.js';
 
 declare module 'socket.io' {
   interface SocketData {
@@ -12,6 +15,11 @@ declare module 'socket.io' {
     roomId?: string;
   }
 }
+
+
+// the global matchmaking queue (outside the connection listener)
+
+let matchmakingQueue: { socket: Socket; userId: string }[] = [];
 
 export const initializeSocket = (httpServer: HttpServer) => {
   const io = new Server(httpServer, {
@@ -49,7 +57,8 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
     registerRoomHandlers(io, socket, startTurnTimer);
     registerGameHandlers(io, socket, startTurnTimer, clearRoomTimer);
-    registerConnectionHandlers(io, socket, currentUserId, activeUsers,clearRoomTimer);
+    matchMakingHandler(io, socket, matchmakingQueue, attemptMatchmaking)
+    registerConnectionHandlers(io, socket, currentUserId, activeUsers, matchmakingQueue , clearRoomTimer );
   });
 
   return io;

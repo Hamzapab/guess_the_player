@@ -32,7 +32,10 @@
     "playersOnline": "Players Online",
     "wait": "wait",
     "quickMatchDescription": "Join an existing open room and battle players globally with zero setup required.",
-    "findMatch": "Find Match"
+    "findMatch": "Find Match",
+    "searching": "SEARCHING FOR OPEN GAME...",
+    "searchingDescription": "Looking for an available opponent near your skill level.",
+    "cancel": "Cancel Search"
   },
   "howToPlay": {
     "title": "How to Play",

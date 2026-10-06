@@ -1,21 +1,56 @@
-import React, { useEffect } from 'react';
+import React, { useEffect  } from 'react';
 import { Zap, Users, Search, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next'; 
 import { useSocketStore } from '../store/socketStore';
+import { useNavigate } from 'react-router-dom';
 
-interface QuickMatchCardProps {
-  onFindMatch: () => void;
-  isSearching: boolean;
+
+interface QuickMatchCard {
+ isSearching : boolean,
+ setIsSearching : (isSearching: boolean) => void,
 }
 
-export const QuickMatchCard: React.FC<QuickMatchCardProps> = ({ 
-  onFindMatch, 
-  isSearching 
+export const QuickMatchCard: React.FC<QuickMatchCard> = ({
+  isSearching,
+  setIsSearching,  
 }) => {
   const { t } = useTranslation();
   const socket = useSocketStore((state) => state.socket);
   const onlineCount = useSocketStore((state) => state.onlineCount);
   const setOnlineCount = useSocketStore((state) => state.setOnlineCount);
+  const navigate = useNavigate();
+
+   useEffect(() => {
+    if (!socket) return;
+
+    const handleMatchFound = (data: { roomId: string }) => {
+      console.log('Match found! Room ID:', data.roomId);
+
+      navigate(`/game/${data.roomId}`);
+      
+      // 1. Close the searching modal
+      setIsSearching(false);
+      
+      // 2. MAGIC HANDOFF: Automatically emit your existing join_room event!
+      // This routes the user right back into your existing game logic flawlessly.
+      socket.emit('join_room', { roomId: data.roomId });
+    };
+
+    socket.on('match_found', handleMatchFound);
+
+    return () => {
+      socket.off('match_found', handleMatchFound);
+    };
+  }, [socket]);
+
+  // Handle clicking "Find Match"
+  const handleStartSearch = () => {
+    if (!socket) return;
+    setIsSearching(true);
+    socket.emit('join_matchmaking');
+  };
+
+
 
   // Sync real-time online player count
   useEffect(() => {
@@ -74,9 +109,9 @@ export const QuickMatchCard: React.FC<QuickMatchCardProps> = ({
 
         {/* CTA */}
         <button
-          onClick={onFindMatch}
+          onClick={handleStartSearch}
           disabled={isSearching}
-          className="w-full py-4 flex items-center justify-center gap-3 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 hover:brightness-110 text-white rounded-xl font-bold text-lg shadow-lg shadow-blue-500/20 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full cursor-pointer py-4 flex items-center justify-center gap-3 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 hover:brightness-110 text-white rounded-xl font-bold text-lg shadow-lg shadow-blue-500/20 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {isSearching ? <Loader2 className="animate-spin" size={20} /> : <Search size={20} />}
           {isSearching ? t("home.searching") : t("home.findMatch")}

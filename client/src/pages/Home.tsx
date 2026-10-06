@@ -8,6 +8,8 @@ import { useTranslation } from 'react-i18next';
 import { Footer } from '../components/Footer';
 import { useGameStore } from '../store/useGameStore';
 import { QuickMatchCard } from '../components/QuickMatchCard';
+import { useSocketStore } from '../store/socketStore';
+import { SearchingModal } from '../components/SearchingModal';
 
 // import ambieant_pitch from '../assets/ambieant_pitch.png'
 
@@ -24,6 +26,15 @@ const Home = () => {
   const [error, setError] = useState('');
   const { getToken } = useAuth();
   const setRoomState = useGameStore((state) => state.setRoomState);
+  const [isSearching, setIsSearching] = useState(false);
+  const socket = useSocketStore((state) => state.socket);
+
+  // Handle clicking "Cancel Search" for quick Match
+  const handleCancelSearch = () => {
+    if (!socket) return;
+    setIsSearching(false);
+    socket.emit('leave_matchmaking');
+  };
 
   useEffect(() => {
     setRoomState({
@@ -68,6 +79,11 @@ const Home = () => {
     <div id='home' className='min-h-screen flex flex-col'>
       <Header />
       <div className="min-h-screen flex-1 flex items-center justify-center p-4">
+        {/*  */}
+          {isSearching && (
+            <SearchingModal onCancel={handleCancelSearch} />
+          )}
+        {/*  */}
         <div className="w-full max-w-5xl">
           {/* Header Section */}
           <div className="text-center mb-12">
@@ -158,7 +174,7 @@ const Home = () => {
             </div>
 
             {/* quick Match */}
-            <QuickMatchCard onFindMatch={() => {}} isSearching={false} />
+            <QuickMatchCard isSearching={isSearching} setIsSearching={setIsSearching} />
           </div>
         </div>
       </div>
