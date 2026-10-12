@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import Auth from './pages/Auth';
 import { HowToPlay } from './pages/HowToPlay';
 import { GameRoom } from './pages/GameRoom';
+import Leaderboard from './pages/Leaderboard';
 import './App.css';
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
       <Routes>
         <Route path="/auth" element={<Auth />} />
         <Route path="/how-to-play" element={<HowToPlay />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
         
         {/* Protected Section */}
         <Route element={<ProtectedRoute />}>

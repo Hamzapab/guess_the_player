@@ -38,7 +38,6 @@ export const GameRoom: React.FC = () => {
 
   // 3. Once socket connects, automatically join the room ID from the URL
   useEffect(() => {
-    console.log("CHeck ")
     console.log(isConnected && roomId)
     if (isConnected && roomId) {
       joinRoom(roomId);

@@ -2,7 +2,8 @@
   "header": {
     "title": "خمن اللاعب",
     "leaderboard": "لوحة الصدارة",
-    "guest": "العب كضيف"
+    "guest": "العب كضيف",
+    "home" : "Home"
   },
   "hero": {
     "testYour": "اختبر",

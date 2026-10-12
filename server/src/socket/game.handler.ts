@@ -2,6 +2,9 @@ import { Server, Socket } from 'socket.io';
 import { randomUUID } from 'crypto';
 import Game from '../models/Game.js';
 import Player from '../models/Player.js';
+import User from '../models/User.js';
+import { handleMatchCompletion } from '../services/handleMatchCompletion.js';
+import { countQuestionsUsed } from '../utils/countRounds.js';
 
 export const registerGameHandlers = (
   io: Server,
@@ -21,14 +24,35 @@ export const registerGameHandlers = (
         return;
       }
 
+
       const currentUserId = user?.userId;
+
+      if (!game.players.includes(currentUserId)) {
+        socket.emit('error', { message: 'User is not a player in this game.' });
+        return;
+      }
+
 
       // Determine winner (the other player)
       const opponentId = game.players.find(id => id !== currentUserId);
 
+
+
+      if (!opponentId) {
+        socket.emit('error', { message: 'Opponent not found.' });
+        return;
+      }
+
+      // fetch Users info 
+      const [winningUser, losingUser] = await Promise.all([
+        User.findOne({ clerkId: opponentId }),
+        User.findOne({ clerkId: currentUserId }),
+      ]);
+
       // End the game
       game.status = 'finished';
       game.winner = opponentId;
+
 
       game.history.push({
         id: randomUUID(),
@@ -39,6 +63,24 @@ export const registerGameHandlers = (
       });
 
       await game.save();
+
+      // Update LeaderBoard
+
+      await handleMatchCompletion(
+        roomId,
+        opponentId,
+        currentUserId,
+        countQuestionsUsed(game.history),
+        {
+          username: winningUser?.username || "Player",
+          avatar: winningUser?.imageUrl,
+        },
+        {
+          username: losingUser?.username || "Player",
+          avatar: losingUser?.imageUrl,
+        }
+      );
+
 
       // Clear timing
       clearRoomTimer(roomId);
@@ -200,6 +242,15 @@ export const registerGameHandlers = (
 
       const currentUserId = user?.userId;
 
+      if (!game.players.includes(currentUserId)) {
+        socket.emit('error', { message: 'User is not a player in this game.' });
+        return;
+      }
+
+
+
+
+
       // Security Check: Is it their turn?
       if (game.currentTurn !== currentUserId) {
         socket.emit('error', { message: 'It is not your turn to guess!' });
@@ -210,6 +261,11 @@ export const registerGameHandlers = (
       const player2Id = game.players[1];
       const opponentId = (currentUserId === player1Id) ? player2Id : player1Id;
       const opponentTargetCardId = game.targetPlayers.get(opponentId);
+
+      if (!opponentId) {
+        socket.emit('error', { message: 'Opponent not found.' });
+        return;
+      }
 
 
       if (!opponentTargetCardId) return;
@@ -234,6 +290,29 @@ export const registerGameHandlers = (
         });
 
         await game.save();
+
+        // fetch Users info 
+        const [winningUser, losingUser] = await Promise.all([
+          User.findOne({ clerkId: currentUserId }),
+          User.findOne({ clerkId: opponentId }),
+        ]);
+
+
+        // Update Leaderboard Stats
+        await handleMatchCompletion(
+          roomId,
+          opponentId,
+          currentUserId,
+          countQuestionsUsed(game.history),
+          {
+            username: winningUser?.username || "Player",
+            avatar: winningUser?.imageUrl,
+          },
+          {
+            username: losingUser?.username || "Player",
+            avatar: losingUser?.imageUrl,
+          }
+        );
 
         io.to(roomId).emit('game_over', {
           winnerId: currentUserId,
@@ -273,6 +352,29 @@ export const registerGameHandlers = (
           game.status = 'finished';
           game.winner = opponentId;
           await game.save();
+
+          // fetch Users info 
+          const [winningUser, losingUser] = await Promise.all([
+            User.findOne({ clerkId: opponentId }),
+            User.findOne({ clerkId: currentUserId }),
+          ]);
+
+
+          // Update Leaderboard Stats
+          await handleMatchCompletion(
+            roomId,
+            opponentId,
+            currentUserId,
+            countQuestionsUsed(game.history),
+            {
+              username: winningUser?.username || "Player",
+              avatar: winningUser?.imageUrl,
+            },
+            {
+              username: losingUser?.username || "Player",
+              avatar: losingUser?.imageUrl,
+            }
+          );
 
           io.to(roomId).emit('game_over', {
             winnerId: opponentId,

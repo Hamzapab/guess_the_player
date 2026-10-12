@@ -2,7 +2,8 @@
   "header": {
     "title": "Guess The Player",
     "leaderboard": "Leaderboard",
-    "guest": "Play as Guest"
+    "guest": "Play as Guest",
+    "home" : "Home"
   },
   "hero": {
     "testYour": "Test Your",
@@ -28,7 +29,7 @@
     "joinArena": "Join Arena",
     "quickMatch": "Quick Match",
     "live": "Live",
-    "automatedMatchmaking": "AUTOMATED MATCHMAKING",
+    "automatedMatchmaking": "Automated Matchmaking",
     "playersOnline": "Players Online",
     "wait": "wait",
     "quickMatchDescription": "Join an existing open room and battle players globally with zero setup required.",

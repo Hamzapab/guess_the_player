@@ -2,7 +2,8 @@
   "header": {
     "title": "Devine le Joueur",
     "leaderboard": "Classement",
-    "guest": "Jouer en invité"
+    "guest": "Jouer en invité",
+    "home" : "Home"
   },
   "hero": {
     "testYour": "Teste ton",

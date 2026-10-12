@@ -15,7 +15,9 @@ app.use(express.json());
 
 import authRoutes from './routes/auth.js';
 import gameRoutes from './routes/games.js';
+import leaderboardRoutes from './routes/leaderboardRoutes.js';
 import playerRoutes from './routes/players.js';
+import testToken from './routes/testToken.js';
 import webhookRoot from './routes/clerkWebhook.js'
 
 
@@ -25,7 +27,9 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/games', gameRoutes);
+app.use('/api/leaderboards', leaderboardRoutes);
 app.use('/api/players', playerRoutes);
+app.use('/getToken', testToken);
 app.use('/', webhookRoot);
 
 connectDB();

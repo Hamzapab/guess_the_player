@@ -76,7 +76,7 @@ const Home = () => {
   const username = user?.username || "Guest";
 
   return (
-    <div id='home' className='min-h-screen flex flex-col'>
+    <div id='home' className='min-h-screen  flex-col'>
       <Header />
       <div className="min-h-screen flex-1 flex items-center justify-center p-4">
         {/*  */}
@@ -84,7 +84,7 @@ const Home = () => {
             <SearchingModal onCancel={handleCancelSearch} />
           )}
         {/*  */}
-        <div className="w-full max-w-5xl">
+        <div className="w-full container">
           {/* Header Section */}
           <div className="text-center mb-12">
             <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-4 tracking-tight drop-shadow-lg">
@@ -105,23 +105,23 @@ const Home = () => {
           )}
 
           {/* Main Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto">
 
             {/* Create Match Card */}
             <div className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-300 backdrop-blur-sm shadow-xl hover:shadow-2xl group">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+              <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-3">
                 <CirclePlus className="text-blue-500" size={24} />
                 {t("home.createMatch")}
               </h2>
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-2"> {t("home.selectLeague")}</label>
+                  <label className="block text-xs font-medium text-slate-400 mb-2"> {t("home.selectLeague")}</label>
                   <div className="relative">
                     <select
                       value={language}
                       onChange={(e) => setLanguage(e.target.value as 'en' | 'fr' | 'ar')}
-                      className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-white appearance-none cursor-pointer hover:border-slate-600 transition-colors"
+                      className="w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-white appearance-none cursor-pointer hover:border-slate-600 transition-colors"
                     >
                       <option value="en">English (Premier League)</option>
                       <option value="fr">Français (Ligue 1)</option>
@@ -136,7 +136,8 @@ const Home = () => {
                 <button
                   onClick={handleCreateGame}
                   disabled={isCreating}
-                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-blue-500/25 transform active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full cursor-pointer py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-bold text-sm shadow-lg 
+                             hover:shadow-blue-500/25 transform active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isCreating ? t("home.creatingArena") : t("home.createMatch")}
                 </button>
@@ -145,28 +146,29 @@ const Home = () => {
 
             {/* Join Match Card */}
             <div className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-300 backdrop-blur-sm shadow-xl hover:shadow-2xl group">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+              <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-3">
                 <DoorOpen className="text-green-500" size={24} />
                 {t("home.joinMatch")}
               </h2>
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-2">{t("home.enterRoomCode")}</label>
+                  <label className="block text-xs font-medium text-slate-400 mb-2">{t("home.enterRoomCode")}</label>
                   <input
                     type="text"
                     placeholder="e.g. 8X2A"
                     value={roomCode}
                     onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
                     onKeyDown={(e) => e.key === 'Enter' && handleJoinGame()}
-                    className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none text-white placeholder-slate-600 text-center tracking-widest font-mono uppercase"
+                    className="w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none text-white placeholder-slate-600 text-center tracking-widest font-mono uppercase"
                   />
                 </div>
 
                 <button
                   onClick={handleJoinGame}
                   disabled={!roomCode.trim()}
-                  className="w-full py-4 bg-transparent border-2 border-slate-600 hover:border-emerald-500 hover:text-emerald-400 text-slate-300 rounded-xl font-bold text-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-emerald-500/10"
+                  className="w-full py-2 cursor-pointer bg-transparent border-2 border-slate-600 hover:border-emerald-500 hover:text-emerald-400 text-slate-300 rounded-xl font-bold 
+                             text-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-emerald-500/10"
                 >
                   {t("home.joinArena")}
                 </button>

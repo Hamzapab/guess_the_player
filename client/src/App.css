@@ -83,6 +83,15 @@ body{
 }
 
 
+.cl-input{
+  border-color: white !important;
+  color: white !important;
+}
+
+.cl-formResendCodeLink{
+  color: rgb(174, 172, 172);
+}
+
 /***************** Hero Page  ******************/
 #hero{
   background-image: url('./assets/hero_bg_overlay.png');

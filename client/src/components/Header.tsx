@@ -3,9 +3,11 @@ import { useState, useRef, useEffect } from "react";
 import { User, LogOut , Settings } from "lucide-react";
 import LanguageDropdown from "../components/LanguageToggle";
 import logo from "../assets/logo.png";
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 
+// Profile page
 const UserProfile = () => {
   const { user } = useUser();
   const {t} = useTranslation();
@@ -14,6 +16,8 @@ const UserProfile = () => {
   const { openUserProfile } = useClerk();
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+ 
+  
 
   const dropSide = i18n.language === 'en' || i18n.language === 'fr'  ? 'right-0' : 'left-0'
 
@@ -88,7 +92,10 @@ const UserProfile = () => {
 // Header
 export const Header = () => {
   const { t } = useTranslation();
-   const { isSignedIn } = useUser();
+  const { isSignedIn } = useUser();
+  const navigate = useNavigate();
+
+   const isLeaderboard = location.pathname === "/leaderboard";
 
   return (
     <div className=" bg-[#020617]/40 border-b border-[#1E293B]/80 text-white  shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.5)]">
@@ -99,7 +106,12 @@ export const Header = () => {
         </div>
         <div className="flex  items-center gap-4 text-xs ">
           <LanguageDropdown/>
-          <p>{t("header.leaderboard")}</p>
+          <a
+            className="cursor-pointer"
+            onClick={() => navigate(isLeaderboard ? "/" : "/leaderboard")}
+          >
+            {isLeaderboard ? t("header.home") : t("header.leaderboard")}
+          </a>
           <button className="bg-blue-500 py-1 px-4 rounded-md text-xs cursor-pointer">
             {t("header.guest")}
           </button>
