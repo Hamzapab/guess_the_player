@@ -66,10 +66,12 @@ export const registerGameHandlers = (
 
       // Update LeaderBoard
 
+       const [winnerUserId, loserUserId] = [opponentId, currentUserId]
+
       await handleMatchCompletion(
         roomId,
-        opponentId,
-        currentUserId,
+        winnerUserId,
+        loserUserId,
         countQuestionsUsed(game.history),
         {
           username: winningUser?.username || "Player",
@@ -296,13 +298,14 @@ export const registerGameHandlers = (
           User.findOne({ clerkId: currentUserId }),
           User.findOne({ clerkId: opponentId }),
         ]);
-
+         
+         const [winnerUserId, loserUserId] = [currentUserId, opponentId]
 
         // Update Leaderboard Stats
         await handleMatchCompletion(
           roomId,
-          opponentId,
-          currentUserId,
+          winnerUserId,
+          loserUserId,
           countQuestionsUsed(game.history),
           {
             username: winningUser?.username || "Player",
@@ -315,7 +318,7 @@ export const registerGameHandlers = (
         );
 
         io.to(roomId).emit('game_over', {
-          winnerId: currentUserId,
+          winnerId: winnerUserId,
           isCorrectGuess: true,
           guessedPlayerId: guessedPlayerId,
           guessedPlayer: guessedPlayer,
@@ -359,12 +362,13 @@ export const registerGameHandlers = (
             User.findOne({ clerkId: currentUserId }),
           ]);
 
+          const [winnerUserId, loserUserId] = [opponentId, currentUserId]
 
           // Update Leaderboard Stats
           await handleMatchCompletion(
             roomId,
-            opponentId,
-            currentUserId,
+            winnerUserId,
+            loserUserId,
             countQuestionsUsed(game.history),
             {
               username: winningUser?.username || "Player",

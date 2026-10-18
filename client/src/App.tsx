@@ -12,7 +12,7 @@ import Leaderboard from './pages/Leaderboard';
 import './App.css';
 
 function App() {
-  const { isSignedIn ,getToken} = useAuth();            
+  const { isSignedIn ,getToken , userId} = useAuth();            
   const { connect, disconnect, isConnected } = useSocketStore();
 
  useEffect(() => {
@@ -32,7 +32,7 @@ function App() {
       <Routes>
         <Route path="/auth" element={<Auth />} />
         <Route path="/how-to-play" element={<HowToPlay />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/leaderboard" element={<Leaderboard currentUserId={userId}/>} />
         
         {/* Protected Section */}
         <Route element={<ProtectedRoute />}>

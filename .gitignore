@@ -1,5 +1,6 @@
 # Main project files
 CHECKLIST.md
+server\src\scripts\dev_seed_ids.json
 
 # Environment files
 .env

@@ -1,5 +1,7 @@
 
 
+const BACKEND_API = import.meta.env.VITE_BACKEND_API
+
 
 export const createGame = async (language: 'en' | 'fr' | 'ar', token: string | null) => {
   const response = await fetch('http://localhost:5000/api/games/create', {
@@ -39,6 +41,30 @@ export const fetchPlayers = async (token: string | null) => {
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || 'Failed to fetch players');
+  }
+
+  return response.json();
+};
+
+
+export const fetchLeaderboardCall = async (
+  queryParams: URLSearchParams,
+  // token: string | null,
+) => {
+  const response = await fetch(
+    `${BACKEND_API}/api/leaderboard?${queryParams.toString()}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    },
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to fetch leaderboard');
   }
 
   return response.json();

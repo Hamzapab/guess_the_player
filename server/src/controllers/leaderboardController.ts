@@ -4,23 +4,25 @@ import { LeaderboardStats } from '../models/LeaderboardStats.js';
 
 export const getLeaderboard = async (req: Request, res: Response): Promise<void> => {
   try {
-    const seasonId = (req.query.seasonId as string) || 'season_4'; 
+    const seasonId = (req.query.seasonId as string) || 'season_4';
     const timeframe = (req.query.timeframe as string) || 'all';   // "daily", "monthly", "all"
     const limit = parseInt(req.query.limit as string) || 20;       // Top N players
     const currentUserId = req.query.userId as string;              // User Rank
 
     const now = new Date();
     const currentDate = now.toISOString().split('T')[0];
-    const currentMonth = currentDate.substring(0, 7);   
+    const currentMonth = currentDate.substring(0, 7);
 
     // Build Redis key
     let redisKey = `lb:${seasonId}:all`;
-    if (timeframe === 'daily') {
-      redisKey = `lb:${seasonId}:daily:${currentDate}`;
-    } else if (timeframe === 'monthly') {
-      redisKey = `lb:${seasonId}:monthly:${currentMonth}`;
-    }
+    if (seasonId != "global") {
+      if (timeframe === 'daily') {
+        redisKey = `lb:${seasonId}:daily:${currentDate}`;
+      } else if (timeframe === 'monthly') {
+        redisKey = `lb:${seasonId}:monthly:${currentMonth}`;
+      }
 
+    }
     // Fetch top user 
     const redisResult = await redis.zrevrange(redisKey, 0, limit - 1, 'WITHSCORES');
 
@@ -30,7 +32,7 @@ export const getLeaderboard = async (req: Request, res: Response): Promise<void>
     if (redisResult.length > 0) {
 
       console.log("HITTT REDIIIIIS");
-     
+
       const userIds: string[] = [];
       const scoreMap: Record<string, number> = {};
 
@@ -68,13 +70,16 @@ export const getLeaderboard = async (req: Request, res: Response): Promise<void>
       let queryFilter: any = { seasonId };
       let sortField = 'stats.points';
 
-      if (timeframe === 'daily') {
-        queryFilter['daily.currentDate'] = currentDate;
-        sortField = 'daily.points';
-      } else if (timeframe === 'monthly') {
-        queryFilter['monthly.currentMonth'] = currentMonth;
-        sortField = 'monthly.points';
+      if (seasonId != "global") {
+        if (timeframe === 'daily') {
+          queryFilter['daily.currentDate'] = currentDate;
+          sortField = 'daily.points';
+        } else if (timeframe === 'monthly') {
+          queryFilter['monthly.currentMonth'] = currentMonth;
+          sortField = 'monthly.points';
+        }
       }
+
 
       const mongoStats = await LeaderboardStats.find(queryFilter)
         .sort({ [sortField]: -1 })
@@ -92,25 +97,80 @@ export const getLeaderboard = async (req: Request, res: Response): Promise<void>
     }
 
     // Get User personal rank and score
-    let userRankInfo = null;
-    if (currentUserId) {
-      const userRank = await redis.zrevrank(redisKey, currentUserId);
-      const userScore = await redis.zscore(redisKey, currentUserId);
-      
-      if (userRank !== null) {
-        userRankInfo = {
-          rank: userRank + 1, // Redis is 0-indexed
-          points: userScore ? parseFloat(userScore) : 0,
+
+    let currentUserData = null;
+
+    if (currentUserId && !leaderboardData.some((p: any) => p.userId === currentUserId)) {
+      let userRank: number | null = null;
+      let userScore: string | null = null;
+
+      try {
+        [userRank, userScore] = await Promise.all([
+          redis.zrevrank(redisKey, currentUserId),
+          redis.zscore(redisKey, currentUserId),
+        ]);
+      } catch (err) {
+        console.warn('Redis unavailable for user rank, falling back to Mongo', err);
+      }
+
+      if (userRank !== null && userScore !== null) {
+
+        const userDbDoc = await LeaderboardStats.findOne({ userId: currentUserId, seasonId });
+
+        currentUserData = {
+          rank: userRank + 1,
+          userId: currentUserId,
+          username: userDbDoc?.username || 'You',
+          avatar: userDbDoc?.avatar || '',
+          points: parseFloat(userScore),
+          wins: (timeframe === 'daily' ? userDbDoc?.daily?.wins : timeframe === 'monthly' ? userDbDoc?.monthly?.wins : userDbDoc?.stats?.wins) ?? 0,
+          losses: (timeframe === 'daily' ? userDbDoc?.daily?.losses : timeframe === 'monthly' ? userDbDoc?.monthly?.losses : userDbDoc?.stats?.losses) ?? 0,
         };
+      } else {
+        //  Mongo fallback
+        const userDbDoc = await LeaderboardStats.findOne({ userId: currentUserId, seasonId });
+
+        if (userDbDoc) {
+          const bucketName = timeframe === 'daily' ? 'daily' : timeframe === 'monthly' ? 'monthly' : 'stats';
+          const bucket: any = userDbDoc[bucketName];
+
+          const isFresh =
+            timeframe === 'daily' ? bucket?.currentDate === currentDate :
+              timeframe === 'monthly' ? bucket?.currentMonth === currentMonth :
+                true;
+
+          if (isFresh && bucket?.points !== undefined) {
+            const filter: Record<string, unknown> = {
+              seasonId,
+              [`${bucketName}.points`]: { $gt: bucket.points },
+            };
+            if (timeframe === 'daily') filter['daily.currentDate'] = currentDate;
+            if (timeframe === 'monthly') filter['monthly.currentMonth'] = currentMonth;
+
+            const playersAhead = await LeaderboardStats.countDocuments(filter);
+
+            currentUserData = {
+              rank: playersAhead + 1,
+              userId: currentUserId,
+              username: userDbDoc.username || 'You',
+              avatar: userDbDoc.avatar || '',
+              points: bucket.points,
+              wins: bucket.wins ?? 0,
+              losses: bucket.losses ?? 0,
+            };
+          }
+        }
       }
     }
+
+
 
     res.status(200).json({
       success: true,
       seasonId,
       timeframe,
       leaderboard: leaderboardData,
-      userRank: userRankInfo,
+      userRank: currentUserData,
     });
 
   } catch (error) {

@@ -1,6 +1,4 @@
 
-/* ---------- Types ---------- */
-// What the API returns. winRatio is deliberately absent: it's derived data.
 export interface Player {
   id: number;
   name: string;
@@ -78,7 +76,7 @@ export const PodiumCard = ({ player, rank }: PodiumCardProps) => {
   );
 };
 
- /* ---------- Small presentational components ---------- */
+ /* ---------- component ---------- */
 interface AvatarProps {
   player: Pick<Player, "name" | "avatar">;
   className?: string;

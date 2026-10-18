@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/games', gameRoutes);
-app.use('/api/leaderboards', leaderboardRoutes);
+app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/players', playerRoutes);
 app.use('/getToken', testToken);
 app.use('/', webhookRoot);
