@@ -22,6 +22,32 @@ export const createGame = async (language: 'en' | 'fr' | 'ar', token: string | n
 };
 
 
+export const roomExists = async (roomCode: string): Promise<string> => {
+  try {
+    const res = await fetch(`http://localhost:5000/api/games/${roomCode}` , {method : "POST"});
+
+    if (res.status === 404) {
+      return "not found";           // room doesn't exist
+    }
+
+    if (!res.ok) {
+      throw new Error(`Request failed: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log(data.game)
+
+    if(data.game.status === "finished"){
+      return "Finished"
+    }
+
+    return "Game Found";              // 200 → room exists
+  } catch (err) {
+    console.error('roomExists error:', err);
+    return "not found";           
+  }
+};
+
 export const fetchPlayers = async (token: string | null) => {
   
 

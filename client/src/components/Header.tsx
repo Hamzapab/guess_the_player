@@ -1,6 +1,6 @@
 import { useUser  , useAuth , useClerk} from "@clerk/clerk-react";
 import { useState, useRef, useEffect } from "react";
-import { User, LogOut , Settings } from "lucide-react";
+import { User, LogOut , Settings, Podium } from "lucide-react";
 import LanguageDropdown from "../components/LanguageToggle";
 import logo from "../assets/logo.png";
 import { useNavigate } from 'react-router-dom';
@@ -106,10 +106,13 @@ export const Header = () => {
         </div>
         <div className="flex  items-center gap-4 text-xs ">
           <LanguageDropdown/>
+
           <a
-            className="cursor-pointer"
+            className="cursor-pointer flex items-center justify-center gap-1.5"
             onClick={() => navigate(isLeaderboard ? "/" : "/leaderboard")}
           >
+            {isLeaderboard ?  "" : <Podium  className="text-amber-300" size={18}/>}
+           
             {isLeaderboard ? t("header.home") : t("header.leaderboard")}
           </a>
           <button className="bg-blue-500 py-1 px-4 rounded-md text-xs cursor-pointer">

@@ -52,3 +52,28 @@ export const createGame = async (req: AuthRequest, res: Response): Promise<void>
     res.status(500).json({ message: 'Server error while creating game' });
   }
 };
+
+
+
+export  const roomExist = async (req: AuthRequest, res: Response) : Promise<void> => {
+  try {
+    const code = req.params.code;
+
+    if(!code) return;
+
+    const game = await Game.findOne({ roomId: code })
+                .select('roomId status')
+                .lean();
+    
+    if (!game) {
+      res.status(404).json({ message: 'Game not found' });
+      return;
+    }
+
+     res.status(200).json({ game }); 
+
+  }catch(error){
+    console.error('Game not found:', error);
+    res.status(500).json({ message: 'Server error while searching for the game' });
+  }
+}

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser, useAuth } from "@clerk/clerk-react";
-import { createGame } from '../api/gameApi';
+import {toast , Toaster} from 'react-hot-toast'; 
+import { createGame , roomExists } from '../api/gameApi';
 import { Header } from "../components/Header";
 import { CirclePlus, DoorOpen } from "lucide-react";
 import { useTranslation } from 'react-i18next';
@@ -67,16 +68,38 @@ const Home = () => {
     }
   };
 
-  const handleJoinGame = () => {
-    // TO-DO : If Room code do not exisit in DB show error
-    if (!roomCode.trim()) return;
-    navigate(`/game/${roomCode.trim()}`);
+  const handleJoinGame = async () => {
+    const code = roomCode.trim();
+    if (!code) return;
+
+    try{
+      const roomFound = await roomExists(code)
+      console.log(roomFound)
+
+       if(roomFound === "Finished"){
+        toast.error("Room Finished")
+        return 
+      }
+    
+      if(roomFound === "Game Found"){
+        navigate(`/game/${code}`);
+        return
+      }
+
+      toast.error("Room Not Found")
+
+    }catch(err){
+      console.log(err)
+    }
+
   };
+
 
   const username = user?.username || "Guest";
 
   return (
     <div id='home' className='min-h-screen  flex-col'>
+      <div><Toaster/></div>
       <Header />
       <div className="min-h-screen flex-1 flex items-center justify-center p-4">
         {/*  */}
@@ -123,9 +146,7 @@ const Home = () => {
                       onChange={(e) => setLanguage(e.target.value as 'en' | 'fr' | 'ar')}
                       className="w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-white appearance-none cursor-pointer hover:border-slate-600 transition-colors"
                     >
-                      <option value="en">English (Premier League)</option>
-                      <option value="fr">Français (Ligue 1)</option>
-                      <option value="ar">Arabic (Saudi League)</option>
+                      <option value="en">All ( Worldwide )</option>
                     </select>
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                       ▼
