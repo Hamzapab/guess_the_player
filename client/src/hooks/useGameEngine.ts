@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useSocketStore } from '../store/socketStore';
 import { useGameStore } from '../store/useGameStore';
+import {toast } from 'react-hot-toast'; 
 
 const TURN_DURATION = 40;
 
@@ -101,8 +102,7 @@ export const useGameEngine = () => {
 
       // Special alert for abandonment
       if (data.reason === 'opponent_abandoned') {
-        // TODO : Replace alert with a Toast
-        alert("You won! Your opponent abandoned the match."); 
+        toast.success("You won! Your opponent abandoned the match."); 
       }
     });
 
@@ -111,7 +111,6 @@ export const useGameEngine = () => {
       setRoomState({gameCancled:true});
       // Special alert for abandonment
       // alert("No Player Join"); 
-
     });
 
 
@@ -119,7 +118,7 @@ export const useGameEngine = () => {
     socket.on('error', (data) => {
       console.error('Game Error:', data.message);
       //TO DO Replace this alert with a proper UI toast notification library later!
-      alert(data.message); 
+      toast.error(data.message); 
     });
 
     // 8. Opponent dropped connection

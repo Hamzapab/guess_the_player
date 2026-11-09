@@ -1,7 +1,9 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { normalize } from '../utils/search.js';
 
 export interface IPlayer extends Document {
   name: string;
+  searchName?: string;  
   nationality: string;
   club: string;
   league: string;
@@ -13,9 +15,10 @@ export interface IPlayer extends Document {
   isLegend: boolean;
 }
 
-const PlayerSchema: Schema = new Schema(
+const PlayerSchema: Schema = new Schema<IPlayer>(
   {
-    name: { type: String, required: true },
+    name: { type: String, required: true},
+    searchName: { type: String, index: true, select: false },
     nationality: { type: String, required: true },
     club: { type: String, required: true },
     league: { type: String },
@@ -31,6 +34,12 @@ const PlayerSchema: Schema = new Schema(
   },
   { timestamps: true }
 );
+
+PlayerSchema.pre('validate', function (next) {
+  if (this.isModified('name') && typeof this.name === 'string') {
+    this.name = normalize(this.name);
+  }
+});
 
 const Player = mongoose.model<IPlayer>('Player', PlayerSchema);
 export default Player;
