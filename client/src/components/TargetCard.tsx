@@ -2,6 +2,7 @@ import { useGameStore } from '../store/useGameStore';
 import { useSocketStore } from '../store/socketStore';
 import { useUser } from '@clerk/clerk-react';
 import { User, Shield, Trophy, Clock } from "lucide-react";
+import { capitalizeName } from '../utils/capitalizeName';
 
 export const TargetCard = () => {
   const myTargetCard = useGameStore((state) => state.myTargetCard);
@@ -21,8 +22,6 @@ export const TargetCard = () => {
 
   const isActive = isConnected;
 
-  // TO DO : Add Player Image
-  const imageUrl = "";
 
   if (!myTargetCard) {
     return (
@@ -98,19 +97,19 @@ export const TargetCard = () => {
       {/* Player Card */}
       <div className="w-full max-w-85 rounded-2xl overflow-hidden bg-gradient-to-b from-[#3a1620] via-[#241119] to-[#120a10] border border-white/10 shadow-2xl">
 
-        <div className="mt-2 h-56 flex items-end justify-center">
-          {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt={myTargetCard.name}
-              className="h-full w-full object-cover object-top"
-            />
+        <div className="mt-0 h-56 flex items-end justify-center">
+          {myTargetCard.imageUrl ? (
+              <img
+                src={myTargetCard.imageUrl }
+                alt={myTargetCard.name}
+                className="h-full w-full object-cover object-top"
+              />
           ) : (
             <User className="w-28 h-28 text-white/15" strokeWidth={1} />
           )}
         </div>
-        <div className="px-4 pt-2">
-          <h2 className="text-white text-xl font-bold leading-tight mb-2">{myTargetCard.name}</h2>
+        <div className="px-4 pt-4">
+          <h2 className="text-white text-xl font-bold leading-tight mb-2">{capitalizeName(myTargetCard.name)}</h2>
           <div className="flex items-center gap-1.5 mt-1 text-white/60 text-sm">
             <Shield className="w-3.5 h-3.5" />
             <span>
@@ -122,10 +121,9 @@ export const TargetCard = () => {
             <span> League: {myTargetCard.league}</span>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-2 px-4 py-4 mt-2">
+        <div className="grid grid-cols-2 gap-2 px-4 py-4 mt-2">
           <Stat label="POS" value={myTargetCard.position} />
           <Stat label="AGE" value={myTargetCard.age} />
-          <Stat label="NO." value={myTargetCard.shirtNum} />
         </div>
       </div>
       <p className='text-[#94A3B8] text-sm max-w-80 mt-4'>
