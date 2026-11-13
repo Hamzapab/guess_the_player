@@ -48,20 +48,21 @@ export const roomExists = async (roomCode: string): Promise<string> => {
   }
 };
 
-export const fetchPlayers = async (token: string | null) => {
+export const fetchPlayers = async (token: string | null, query : string , signal?: AbortSignal) => {
   
 
   if (!token) {
     throw new Error('Not authenticated');
   }
 
-  const response = await fetch('http://localhost:5000/api/players', {
+  const response = await fetch(`http://localhost:5000/api/players/search?q=${query}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
       'Cache-Control': 'no-cache',
       'Pragma': 'no-cache'
     },
+    signal
   });
 
   if (!response.ok) {

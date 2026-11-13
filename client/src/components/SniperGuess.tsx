@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '../store/useGameStore';
-  import { useUser, useAuth } from "@clerk/clerk-react";
+import { useUser } from "@clerk/clerk-react";
 import { submitFinalGuess } from '../store/gameActions';
-import { fetchPlayers } from '../api/gameApi';
+import { usePlayerSearch } from '../hooks/usePlayerSearch';
 
 
 export interface Player {
@@ -26,7 +26,6 @@ export const SniperGuess: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const dropdownRef = useRef<HTMLFormElement | null>(null);
-  const { getToken } = useAuth();
   
   const currentTurn = useGameStore((state) => state.currentTurn);
 
@@ -34,23 +33,11 @@ export const SniperGuess: React.FC = () => {
   const localUserId = user?.id;
   
   const isMyTurn = currentTurn === localUserId;
+
+  // Skip searching when the input just mirrors the selected player's name
+  const shouldSearch = isMyTurn && selectedPlayer?.name !== searchTerm;
+  const { players } = usePlayerSearch(searchTerm, shouldSearch);
   
-  const [players, setPlayers] =  useState<Player[]>([]);
-  
-  useEffect(() => {
-    getToken()
-    .then(token => fetchPlayers(token))
-      .then(data => {
-       setPlayers(data.data);
-    })
-    .catch(err => console.error(err));
-  },[]);
-
-
-
-  const filteredPlayers = searchTerm.trim() === ''
-    ? []
-    : players.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
   useEffect(() => {
     const clickOutside = (e: MouseEvent) => {
@@ -108,9 +95,9 @@ export const SniperGuess: React.FC = () => {
             />
 
             {/* Autocomplete Dropdown Options */}
-            {isOpen && filteredPlayers.length > 0 && (
+            {isOpen && players.length > 0 && (
               <ul className="absolute z-50 w-full bg-gray-900 border border-gray-700 mt-1 max-h-40 overflow-y-auto rounded-lg shadow-2xl">
-                {filteredPlayers.map((player) => (
+                {players.map((player) => (
                   <li
                     key={player._id}
                     onClick={() => handleSelect(player)}

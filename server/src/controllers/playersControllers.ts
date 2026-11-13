@@ -83,7 +83,7 @@ export const searchPlayers = async (req: Request, res: Response): Promise<void> 
 
     const q = normalize(raw);
     if (q.length < MIN_QUERY_LENGTH || q.length > MAX_QUERY_LENGTH) {
-      res.json({ success: true, data: [] });
+      res.json({ success: true, data: ["Unexpected query length"] });
       return;
     }
 
