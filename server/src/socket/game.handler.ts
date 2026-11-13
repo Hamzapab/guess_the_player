@@ -238,6 +238,7 @@ export const registerGameHandlers = (
   });
 
   socket.on('submit_final_guess', async ({ roomId, guessedPlayerId, guessedPlayer }: { roomId: string, guessedPlayerId: string, guessedPlayer: string }) => {
+    console.log('HIT FINAL GUESS')
     try {
       const game = await Game.findOne({ roomId });
       if (!game || game.status !== 'active') return;
@@ -248,9 +249,6 @@ export const registerGameHandlers = (
         socket.emit('error', { message: 'User is not a player in this game.' });
         return;
       }
-
-
-
 
 
       // Security Check: Is it their turn?
@@ -355,6 +353,7 @@ export const registerGameHandlers = (
           game.status = 'finished';
           game.winner = opponentId;
           await game.save();
+
 
           // fetch Users info 
           const [winningUser, losingUser] = await Promise.all([

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '../store/useGameStore';
 import { useUser } from "@clerk/clerk-react";
+import { Heart } from 'lucide-react';
 import { submitFinalGuess } from '../store/gameActions';
 import { usePlayerSearch } from '../hooks/usePlayerSearch';
 
@@ -24,13 +25,23 @@ export interface Player {
 export const SniperGuess: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const history = useGameStore((state) => state.history);
+  const lives = useGameStore((state) => state.lives);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const dropdownRef = useRef<HTMLFormElement | null>(null);
+
+
+  console.log(lives)
   
   const currentTurn = useGameStore((state) => state.currentTurn);
 
+  const lastHistoryItem = history[history.length - 1];
+  const isPending = lastHistoryItem?.details.answer === 'pending';
+
   const { user } = useUser();
   const localUserId = user?.id;
+
+ const myLives = localUserId ? (lives[localUserId] ?? 3) : 3;
   
   const isMyTurn = currentTurn === localUserId;
 
@@ -68,15 +79,26 @@ export const SniperGuess: React.FC = () => {
 
   return (
     <div className="bg-gray-950 border border-red-900/30 rounded-xl p-5 py-4">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-lg">🎯</span>
-        <h3 className="font-bold text-sm text-gray-300 tracking-wider">SNIPER FINAL GUESS</h3>
+      <div className="w-full flex justify-between items-center gap-2 mb-2">
+        <div  className="flex items-center gap-2">
+          <span className="text-lg">🎯</span>
+          <h3 className="font-bold text-sm text-gray-300 tracking-wider">SNIPER FINAL GUESS</h3>
+        </div>
+        <div className="flex gap-1 items-center" >
+  {Array.from({ length: 3 }, (_, i) => (
+    <Heart
+      key={i}
+      size={15}
+      className={i < myLives ? "text-rose-500 fill-rose-500" : "text-slate-600"}
+    />
+  ))}
+</div>
       </div>
       <p className="text-xs text-gray-400 mb-2">
         Think you know who they are playing as? Search the master listing and lock it in.
       </p>
 
-      {isMyTurn ? (
+      {(isMyTurn && !isPending) ? (
         <form onSubmit={handleFireGuess} className="space-y-2" ref={dropdownRef}>
           <div className="relative">
             <input
