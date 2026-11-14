@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '../store/useGameStore';
 import { useUser } from "@clerk/clerk-react";
-import { Heart } from 'lucide-react';
+import { Heart, Lock , Target} from 'lucide-react';
 import { submitFinalGuess } from '../store/gameActions';
 import { usePlayerSearch } from '../hooks/usePlayerSearch';
 
@@ -81,10 +81,12 @@ export const SniperGuess: React.FC = () => {
     <div className="bg-gray-950 border border-red-900/30 rounded-xl p-5 py-4">
       <div className="w-full flex justify-between items-center gap-2 mb-2">
         <div  className="flex items-center gap-2">
-          <span className="text-lg">🎯</span>
+          <span className="text-lg">
+            <Target className="w-3 h-3 text-red-500 drop-shadow-[0_0_6px_rgba(239,68,68,0.9)]" />
+          </span>
           <h3 className="font-bold text-sm text-gray-300 tracking-wider">SNIPER FINAL GUESS</h3>
         </div>
-        <div className="flex gap-1 items-center" >
+        <div className="flex gap-1 items-center " role="img" aria-label={`${myLives} Remaining Lives`}>
   {Array.from({ length: 3 }, (_, i) => (
     <Heart
       key={i}
@@ -142,8 +144,9 @@ export const SniperGuess: React.FC = () => {
           </button>
         </form>
       ) : (
-        <div className="bg-gray-900 text-center text-gray-500 text-xs py-3 rounded-lg border border-gray-800 italic">
-          🔒 Locked until your attack turn.
+        <div className="flex justify-center items-center gap-3
+        bg-gray-900 text-center text-gray-500 text-xs py-3 rounded-lg border border-gray-800 italic">
+          <Lock className="w-4 h-4 text-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.9)]"  /> Locked until your attack turn.
         </div>
       )}
     </div>

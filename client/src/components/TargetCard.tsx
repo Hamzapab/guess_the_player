@@ -95,9 +95,11 @@ export const TargetCard = () => {
         )}
       </div>
       {/* Player Card */}
-      <div className="w-full max-w-85 rounded-2xl overflow-hidden bg-gradient-to-b from-[#3a1620] via-[#241119] to-[#120a10] border border-white/10 shadow-2xl">
+      <div className="w-72 max-w-85 rounded-2xl overflow-hidden bg-gradient-to-b from-[#3a1620] via-[#241119] to-[#120a10] border border-white/10 shadow-2xl">
+      
 
-        <div className="mt-0 h-56 flex items-end justify-center">
+        <div className="mt-0 h-56">
+          <div className="relative h-56 w-full">
           {myTargetCard.imageUrl ? (
               <img
                 src={myTargetCard.imageUrl }
@@ -107,17 +109,19 @@ export const TargetCard = () => {
           ) : (
             <User className="w-28 h-28 text-white/15" strokeWidth={1} />
           )}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#250b12] via-transparent to-transparent" />
+          </div>
         </div>
         <div className="px-4 pt-4">
           <h2 className="text-white text-xl font-bold leading-tight mb-2">{capitalizeName(myTargetCard.name)}</h2>
-          <div className="flex items-center gap-1.5 mt-1 text-white/60 text-sm">
+          <div className="flex items-center gap-1.5 mt-1 text-white/60 text-xs">
             <Shield className="w-3.5 h-3.5" />
             <span>
               {myTargetCard.club} &middot; {myTargetCard.nationality}
             </span>
           </div>
           <div className="text-white/60  text-xs text-start flex mt-1">
-            <Trophy className="w-3.5 h-3.5 me-2" />
+            <Trophy className="w-3.5 h-3.5 me-2 text-amber-300" />
             <span> League: {myTargetCard.league}</span>
           </div>
         </div>

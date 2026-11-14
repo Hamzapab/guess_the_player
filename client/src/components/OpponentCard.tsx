@@ -84,7 +84,7 @@ export const OpponentCard = () => {
       </div>
 
       {/* Player Card */}
-      <div className="w-full h-[380px] max-w-85 rounded-2xl overflow-hidden bg-gradient-to-b from-[#3a1620] via-[#241119] to-[#120a10] border border-white/10 shadow-2xl">
+      <div className="w-72 h-[380px] max-w-85 rounded-2xl overflow-hidden bg-gradient-to-b from-[#3a1620] via-[#241119] to-[#120a10] border border-white/10 shadow-2xl">
         <div className="h-full relative rounded-2xl bg-gray-900/60 border border-gray-800 p-5 overflow-hidden animate-pulse">
           <div className="w-8 h-9 rounded-full bg-gray-800 mb-6" />
 
