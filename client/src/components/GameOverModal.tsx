@@ -2,6 +2,7 @@ import { Trophy, Frown, Home, Sparkles } from 'lucide-react';
 import { useGameStore } from '../store/useGameStore';
 import { useAuth } from '@clerk/clerk-react';
 import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react';
 
 export const GameOverModal = () => {
   const { t } = useTranslation();
@@ -14,6 +15,24 @@ export const GameOverModal = () => {
     state.history.length > 0 ? state.history[state.history.length - 1].action : null
   );
   const setRoomState = useGameStore((state) => state.setRoomState);
+
+  const isFinished = status === 'finished';
+
+   useEffect(() => {
+    if (!isFinished) return;
+
+    window.history.pushState({ gameOverModal: true }, '', window.location.href);
+
+    const handlePopState = () => {
+      window.history.pushState({ gameOverModal: true }, '', window.location.href);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [isFinished]);
 
   // Only show  when the game status is 'finished'
   if (status !== 'finished') return null;
